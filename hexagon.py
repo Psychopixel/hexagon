@@ -44,23 +44,49 @@ class Hexagon(RelativeLayout):
         with self.canvas.before:
             self.canvas.clear()
             Color(self.r, self.g, self.b, self.a)
-            triangleVertices, vertices, indices = self.build_mesh(pi/2)
+            triangleVertices, self.vertices, indices = self.build_mesh(pi/2)
+            
             mesh = Mesh(vertices=triangleVertices, indices=indices)
             mesh.mode = "triangle_fan"
             if self.stroke_tickness>0:
                 Color(self.stroke_r, self.stroke_g, self.stroke_b, self.stroke_a)
-                Line(points=vertices, width=self.stroke_tickness)
+                Line(points=self.vertices, width=self.stroke_tickness)
+            
+
+    def point_inside_parallelogram(self, point, v1, v2, v3, v4):
+        def sign(p1, p2, p3):
+            return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])
+
+        d1 = sign(point, v1, v2)
+        d2 = sign(point, v2, v3)
+        d3 = sign(point, v3, v4)
+        d4 = sign(point, v4, v1)
+
+        has_neg = (d1 < 0) or (d2 < 0) or (d3 < 0) or (d4 < 0)
+        has_pos = (d1 > 0) or (d2 > 0) or (d3 > 0) or (d4 > 0)
+
+        return not (has_neg and has_pos)
 
     def on_touch_down(self, touch):
         # Check if the touch event occurred within this widget
-        if self.collide_point(*touch.pos):
+        self.v1 = [self.vertices[0] + self.pos[0], self.vertices[1] + self.pos[1]]
+        self.v2 = [self.vertices[2] + self.pos[0], self.vertices[3] + self.pos[1]]
+        self.v3 = [self.vertices[4] + self.pos[0], self.vertices[5] + self.pos[1]]
+        self.v4 = [self.vertices[6] + self.pos[0], self.vertices[7] + self.pos[1]]
+        self.v5 = [self.vertices[8] + self.pos[0], self.vertices[9] + self.pos[1]]
+        self.v6 = [self.vertices[10] + self.pos[0], self.vertices[11] + self.pos[1]]
+
+        point = list(touch.pos)
+        if self.point_inside_parallelogram(point, self.v1, self.v2, self.v4, self.v5) \
+            or self.point_inside_parallelogram(point, self.v2, self.v3, self.v5, self.v6) \
+                or self.point_inside_parallelogram(point, self.v3, self.v4, self.v6, self.v1):
             print("Hex " + self.coords_label.text + " was touched!")
             
             # Handle the event and stop propagation
             return True
         
         # If the touch event wasn't within this widget, continue propagation
-        return super(Hexagon, self).on_touch_down(touch)
+        return super().on_touch_down(touch)
 
     
     def build_mesh(self, rotation=0.0):
