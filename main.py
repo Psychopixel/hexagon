@@ -31,12 +31,16 @@ class HexApp(App):
         )
         self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
         self.container.add_widget(self.grid)
-
         return self.container
+
+    def hexClicked_handler(self, instance):
+        print(f"Received on_my_event in {self.__class__.__name__} from {instance.coords_label.text}!")
 
     def on_start(self):
         self.container.center = Window.center
         self.grid.create_hex(self.container.center_x, self.container.center_y)
+        for hex in self.grid.children:
+            hex.bind(on_hex_clicked_event=self.hexClicked_handler)
         self.grid.create_arrow()
         self.grid.setArrow("hex_5_5", 0)
         # app background color

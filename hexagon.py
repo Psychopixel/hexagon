@@ -36,6 +36,9 @@ class Hexagon(RelativeLayout):
         self.redraw()
         self.add_widget(self.coords_label)
 
+        # Register the custom event
+        self.register_event_type('on_hex_clicked_event')
+
     def update_label(self, instance, value):
         self.coords_label.text = f"({self.xCoord}, {self.yRange - self.yCoord -1})"
         self.coords_label.pos = (self.hex_size/2, self.hex_size/2)
@@ -81,6 +84,8 @@ class Hexagon(RelativeLayout):
             or self.point_inside_parallelogram(point, self.v2, self.v3, self.v5, self.v6) \
                 or self.point_inside_parallelogram(point, self.v3, self.v4, self.v6, self.v1):
             print("Hex " + self.coords_label.text + " was touched!")
+            # Dispatch the custom event
+            self.dispatch('on_hex_clicked_event')
             
             # Handle the event and stop propagation
             return True
@@ -88,6 +93,10 @@ class Hexagon(RelativeLayout):
         # If the touch event wasn't within this widget, continue propagation
         return super().on_touch_down(touch)
 
+    def on_hex_clicked_event(self, *args):
+        # Set the bubbled property to True to propagate the event
+        self.bubbled = True
+        print(f"{self.coords_label.text} dispatched on_hex_clicked_event!")
     
     def build_mesh(self, rotation=0.0):
         # returns a Mesh of a rough circle with rotation.
