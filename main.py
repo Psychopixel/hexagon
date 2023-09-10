@@ -34,7 +34,7 @@ class HexApp(App):
         return self.container
 
     def hexClicked_handler(self, instance):
-        print(f"Received on_my_event in {self.__class__.__name__} from {instance.coords_label.text}!")
+        print(f"Received on_my_event in {self.__class__.__name__} from {str(instance.xCoord)} ,  {str(instance.yCoord)}!")
 
     def on_start(self):
         self.container.center = Window.center

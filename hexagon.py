@@ -21,10 +21,11 @@ class Hexagon(RelativeLayout):
         self.stroke_b = stroke_b
         self.stroke_a = stroke_a
         self.stroke_tickness = stroke_tickness
-        self.xCoord = x
-        self.yCoord = y
+        
         self.xRange = xRange
         self.yRange = yRange
+        self.xCoord = x
+        self.yCoord = self.yRange - y - 1
 
         self.coords_label = Label()
         self.coords_label.color = (1,1,1,1)
@@ -40,7 +41,7 @@ class Hexagon(RelativeLayout):
         self.register_event_type('on_hex_clicked_event')
 
     def update_label(self, instance, value):
-        self.coords_label.text = f"({self.xCoord}, {self.yRange - self.yCoord -1})"
+        self.coords_label.text = f"({self.xCoord}, {self.yCoord})"
         self.coords_label.pos = (self.hex_size/2, self.hex_size/2)
 
     def redraw(self):

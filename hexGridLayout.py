@@ -61,7 +61,7 @@ class HexGridLayout(FloatLayout):
         pass
     
     def setArrow(self, hex, direction):
-        self.arrow.center = self.getHexCenter(hex)
+        self.arrow.moveArrow(self.getHexCenter(hex),self.ids[hex].xCoord, self.ids[hex].yCoord)
         self.arrow.rotateButton(direction)
 
     def getHexCenter(self, hex_name):

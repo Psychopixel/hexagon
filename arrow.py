@@ -5,6 +5,8 @@ from kivy.graphics import Color, Rectangle
 from kivy.graphics import Rotate
 from math import pi
 
+from hexagon import Hexagon
+
 class Arrow(RelativeLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -16,9 +18,18 @@ class Arrow(RelativeLayout):
         self.add_widget(self.arrow_button)
         #self.coloraSfondo(self.arrow_button, 1., 0.15, 0.15, 1)
 
+        self.xCoord = -1
+        self.yCoord = -1
+        self.direction = -1
+
+    def moveArrow(self, center, xCoord, yCoord):
+        self.center = center
+        self.xCoord = xCoord
+        self.yCoord = yCoord
 
     def rotateButton(self, direction):
         # Apply the rotation
+        self.direction = direction
         angleRotation = direction * -60
         # Apply a rotation of 45 degrees about the center of the widget
         with self.arrow_button.canvas.before:
