@@ -1,0 +1,8 @@
+
+.vscode/
+*.code-workspace
+*.pyc
+*.zip
+appoggio/
+__pycache__/
+.venv/
