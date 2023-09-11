@@ -1,7 +1,7 @@
 from kivy.uix.floatlayout import FloatLayout
 
-from hexagon import Hexagon
 from arrow import Arrow
+from hexagon import Hexagon
 
 
 class HexGridLayout(FloatLayout):
@@ -41,7 +41,7 @@ class HexGridLayout(FloatLayout):
                     x,
                     y,
                     self.xRange,
-                    self.yRange
+                    self.yRange,
                 )
                 hexagon.pos = (
                     x * (self.hex_height * 2)
@@ -59,13 +59,29 @@ class HexGridLayout(FloatLayout):
     def create_arrow(self):
         self.add_widget(self.arrow)
         pass
-    
+
     def setArrow(self, hex, direction):
-        self.arrow.moveArrow(self.getHexCenter(hex),self.ids[hex].xCoord, self.ids[hex].yCoord)
+        self.arrow.moveArrow(
+            self.getHexCenter(hex), self.ids[hex].xCoord, self.ids[hex].yCoord
+        )
         self.arrow.rotateButton(direction)
 
+    def moveArrow(self, hex):
+        self.arrow.moveArrow(
+            self.getHexCenter(hex), self.ids[hex].xCoord, self.ids[hex].yCoord
+        )
+
+    def rotateArrow(self, new_direction):
+        self.arrow.rotateButton(new_direction)
+
+    def getArrow(self):
+        return self.arrow.xCoord, self.arrow.yCoord, self.arrow.direction
+
     def getHexCenter(self, hex_name):
-        return (self.ids[hex_name].center_x + self.arrow.arrow_button.width/2, self.ids[hex_name].center_y+self.arrow.arrow_button.height/2)
+        return (
+            self.ids[hex_name].center_x + self.arrow.arrow_button.width / 2,
+            self.ids[hex_name].center_y + self.arrow.arrow_button.height / 2,
+        )
 
     def do_layout(self, *args):
         pass

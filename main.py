@@ -11,6 +11,7 @@ Config.set("graphics", "fullscreen", "auto")
 
 from kivy.app import App
 
+
 class HexApp(App):
     def build(self):
         self.hex_size = 100
@@ -21,7 +22,9 @@ class HexApp(App):
         self.container = RelativeLayout()
 
         # Create an instance of HexGridLayout with appropriate parameters
-        self.grid = HexGridLayout(hex_size=self.hex_size, xRange=self.xRange, yRange=self.yRange)
+        self.grid = HexGridLayout(
+            hex_size=self.hex_size, xRange=self.xRange, yRange=self.yRange
+        )
 
         self.grid.size_hint = (None, None)
         self.grid.size = (
@@ -34,7 +37,131 @@ class HexApp(App):
         return self.container
 
     def hexClicked_handler(self, instance):
-        print(f"Received on_my_event in {self.__class__.__name__} from {str(instance.xCoord)} ,  {str(instance.yCoord)}!")
+        print(
+            f"Received on_hex_clicked_event in {self.__class__.__name__} from {str(instance.xCoord)}, {str(instance.yCoord)}!"
+        )
+        arrow_x, arrow_y, arrow_direction = self.grid.getArrow()
+        print(
+            f"La freccia si trova sull'hex ({arrow_x},{arrow_y}) direzione: {arrow_direction}"
+        )
+        dif_x = instance.xCoord - arrow_x
+        dif_y = instance.yCoord - arrow_y
+        print(f"dif_x: {dif_x} dif_y: {dif_y}")
+
+        if dif_x == 0 and dif_y == 0:
+            # hex della freccia
+            pass
+        else:
+            # hex contiguous
+            if arrow_y % 2 == 0:
+                # row even
+                if dif_x > 1 or dif_x < -1 or dif_y > 1 or dif_y < -1:
+                    # hex not contiguous
+                    pass
+                elif not (
+                    (dif_x == -1 and dif_y == -1)
+                    or (dif_x == 0 and dif_y == -1)
+                    or (dif_x == 1 and dif_y == 0)
+                    or (dif_x == 0 and dif_y == 1)
+                    or (dif_x == -1 and dif_y == 1)
+                    or (dif_x == -1 and dif_y == 0)
+                ):
+                    # hex not contiguous
+                    pass
+                else:
+                    if arrow_direction == 0:
+                        if dif_x == 1 and dif_y == 0:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == 0 and dif_y == -1:
+                            self.grid.rotateArrow(5)
+                        elif dif_x == 0 and dif_y == 1:
+                            self.grid.rotateArrow(1)
+                    elif arrow_direction == 1:
+                        if dif_x == 0 and dif_y == 1:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == 1 and dif_y == 0:
+                            self.grid.rotateArrow(0)
+                        elif dif_x == -1 and dif_y == 1:
+                            self.grid.rotateArrow(2)
+                    elif arrow_direction == 2:
+                        if dif_x == -1 and dif_y == 1:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == 0 and dif_y == 1:
+                            self.grid.rotateArrow(1)
+                        elif dif_x == -1 and dif_y == 0:
+                            self.grid.rotateArrow(3)
+                    elif arrow_direction == 3:
+                        if dif_x == -1 and dif_y == 0:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == -1 and dif_y == 1:
+                            self.grid.rotateArrow(2)
+                        elif dif_x == -1 and dif_y == -1:
+                            self.grid.rotateArrow(4)
+                    elif arrow_direction == 4:
+                        if dif_x == -1 and dif_y == -1:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == -1 and dif_y == 0:
+                            self.grid.rotateArrow(3)
+                        elif dif_x == 0 and dif_y == -1:
+                            self.grid.rotateArrow(5)
+                    else:
+                        if dif_x == 0 and dif_y == -1:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == -1 and dif_y == -1:
+                            self.grid.rotateArrow(4)
+                        elif dif_x == 1 and dif_y == 0:
+                            self.grid.rotateArrow(0)
+            else:
+                # row odd
+                if dif_x > 1 or dif_x < -1 or dif_y > 1 or dif_y < -1:
+                    # hex not contiguous
+                    pass
+                elif (dif_x == -1 and dif_y == -1) or (dif_x == -1 and dif_y == 1):
+                    # hex not contiguous
+                    pass
+                else:
+                    if arrow_direction == 0:
+                        if dif_x == 1 and dif_y == 0:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == 1 and dif_y == -1:
+                            self.grid.rotateArrow(5)
+                        elif dif_x == 1 and dif_y == 1:
+                            self.grid.rotateArrow(1)
+                    elif arrow_direction == 1:
+                        if dif_x == 1 and dif_y == 1:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == 1 and dif_y == 0:
+                            self.grid.rotateArrow(0)
+                        elif dif_x == 0 and dif_y == 1:
+                            self.grid.rotateArrow(2)
+                    elif arrow_direction == 2:
+                        if dif_x == 0 and dif_y == 1:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == 1 and dif_y == 1:
+                            self.grid.rotateArrow(1)
+                        elif dif_x == -1 and dif_y == 0:
+                            self.grid.rotateArrow(3)
+                    elif arrow_direction == 3:
+                        if dif_x == -1 and dif_y == 0:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == 0 and dif_y == 1:
+                            self.grid.rotateArrow(2)
+                        elif dif_x == 0 and dif_y == -1:
+                            self.grid.rotateArrow(4)
+                    elif arrow_direction == 4:
+                        if dif_x == 0 and dif_y == -1:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == -1 and dif_y == 0:
+                            self.grid.rotateArrow(3)
+                        elif dif_x == 1 and dif_y == -1:
+                            self.grid.rotateArrow(5)
+                    else:
+                        if dif_x == 1 and dif_y == -1:
+                            self.grid.moveArrow(instance.name)
+                        elif dif_x == 0 and dif_y == -1:
+                            self.grid.rotateArrow(4)
+                        elif dif_x == 1 and dif_y == 0:
+                            self.grid.rotateArrow(0)
 
     def on_start(self):
         self.container.center = Window.center
