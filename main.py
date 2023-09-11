@@ -37,131 +37,86 @@ class HexApp(App):
         return self.container
 
     def hexClicked_handler(self, instance):
-        print(
-            f"Received on_hex_clicked_event in {self.__class__.__name__} from {str(instance.xCoord)}, {str(instance.yCoord)}!"
-        )
         arrow_x, arrow_y, arrow_direction = self.grid.getArrow()
-        print(
-            f"La freccia si trova sull'hex ({arrow_x},{arrow_y}) direzione: {arrow_direction}"
-        )
         dif_x = instance.xCoord - arrow_x
         dif_y = instance.yCoord - arrow_y
-        print(f"dif_x: {dif_x} dif_y: {dif_y}")
 
+        # Define possible movements based on direction and differences
+        movements = {
+            0: {
+                (1, 0, 1): 'move',
+                (1, 0, 0): 'move',
+                (0, -1, 0): 'rotate_5',
+                (1, -1, 1): 'rotate_5',
+                (0, 1, 0): 'rotate_1',
+                (1, 1, 1): 'rotate_1'
+            },
+            1: {
+                (0, 1, 0): 'move',
+                (1, 1, 1): 'move',
+                (1, 0, 0): 'rotate_0',
+                (1, 0, 1): 'rotate_0',
+                (-1, 1, 0): 'rotate_2',
+                (0, 1, 1): 'rotate_2'
+            },
+            2: {
+                (-1, 1, 0): 'move',
+                (0, 1, 1): 'move',
+                (0, 1, 0): 'rotate_1',
+                (1, 1, 1): 'rotate_1',
+                (-1, 0, 0): 'rotate_3',
+                (-1, 0, 1): 'rotate_3'
+            },
+            3: {
+                (-1, 0, 0): 'move',
+                (-1, 0, 1): 'move',
+                (-1, 1, 0): 'rotate_2',
+                (0, 1, 1): 'rotate_2',
+                (-1, -1, 0): 'rotate_4',
+                (0, -1, 1): 'rotate_4',
+            },
+            4: {
+                (-1, -1, 0): 'move',
+                (0, -1, 1): 'move',
+                (-1, 0, 0): 'rotate_3',
+                (-1, 0, 1): 'rotate_3',
+                (0, -1, 0): 'rotate_5',
+                (1, -1, 1): 'rotate_5'
+            },
+            5: {
+                (0, -1, 0): 'move',
+                (1, -1, 1): 'move',
+                (-1, -1, 0): 'rotate_4',
+                (0, -1, 1): 'rotate_4',
+                (1, 0, 0): 'rotate_0',
+                (1, 0, 1): 'rotate_0'
+            }
+        }
+
+        # Check if clicked hex is the one with the arrow
         if dif_x == 0 and dif_y == 0:
-            # hex della freccia
-            pass
-        else:
-            # hex contiguous
-            if arrow_y % 2 == 0:
-                # row even
-                if dif_x > 1 or dif_x < -1 or dif_y > 1 or dif_y < -1:
-                    # hex not contiguous
-                    pass
-                elif not (
-                    (dif_x == -1 and dif_y == -1)
-                    or (dif_x == 0 and dif_y == -1)
-                    or (dif_x == 1 and dif_y == 0)
-                    or (dif_x == 0 and dif_y == 1)
-                    or (dif_x == -1 and dif_y == 1)
-                    or (dif_x == -1 and dif_y == 0)
-                ):
-                    # hex not contiguous
-                    pass
-                else:
-                    if arrow_direction == 0:
-                        if dif_x == 1 and dif_y == 0:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == 0 and dif_y == -1:
-                            self.grid.rotateArrow(5)
-                        elif dif_x == 0 and dif_y == 1:
-                            self.grid.rotateArrow(1)
-                    elif arrow_direction == 1:
-                        if dif_x == 0 and dif_y == 1:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == 1 and dif_y == 0:
-                            self.grid.rotateArrow(0)
-                        elif dif_x == -1 and dif_y == 1:
-                            self.grid.rotateArrow(2)
-                    elif arrow_direction == 2:
-                        if dif_x == -1 and dif_y == 1:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == 0 and dif_y == 1:
-                            self.grid.rotateArrow(1)
-                        elif dif_x == -1 and dif_y == 0:
-                            self.grid.rotateArrow(3)
-                    elif arrow_direction == 3:
-                        if dif_x == -1 and dif_y == 0:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == -1 and dif_y == 1:
-                            self.grid.rotateArrow(2)
-                        elif dif_x == -1 and dif_y == -1:
-                            self.grid.rotateArrow(4)
-                    elif arrow_direction == 4:
-                        if dif_x == -1 and dif_y == -1:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == -1 and dif_y == 0:
-                            self.grid.rotateArrow(3)
-                        elif dif_x == 0 and dif_y == -1:
-                            self.grid.rotateArrow(5)
-                    else:
-                        if dif_x == 0 and dif_y == -1:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == -1 and dif_y == -1:
-                            self.grid.rotateArrow(4)
-                        elif dif_x == 1 and dif_y == 0:
-                            self.grid.rotateArrow(0)
+            return
+
+        # Conditions for contiguous hexes
+        if arrow_y % 2 == 0:  # Even row
+            if (dif_x, dif_y, 0) in [(-1, 0, 0), (-1, 1, 0), (0, 1, 0), (-1, -1, 0), (0, -1, 0), (1, 1, 0), (1, 0, 0) ]:
+                action = movements[arrow_direction].get((dif_x, dif_y, 0))
             else:
-                # row odd
-                if dif_x > 1 or dif_x < -1 or dif_y > 1 or dif_y < -1:
-                    # hex not contiguous
-                    pass
-                elif (dif_x == -1 and dif_y == -1) or (dif_x == -1 and dif_y == 1):
-                    # hex not contiguous
-                    pass
-                else:
-                    if arrow_direction == 0:
-                        if dif_x == 1 and dif_y == 0:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == 1 and dif_y == -1:
-                            self.grid.rotateArrow(5)
-                        elif dif_x == 1 and dif_y == 1:
-                            self.grid.rotateArrow(1)
-                    elif arrow_direction == 1:
-                        if dif_x == 1 and dif_y == 1:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == 1 and dif_y == 0:
-                            self.grid.rotateArrow(0)
-                        elif dif_x == 0 and dif_y == 1:
-                            self.grid.rotateArrow(2)
-                    elif arrow_direction == 2:
-                        if dif_x == 0 and dif_y == 1:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == 1 and dif_y == 1:
-                            self.grid.rotateArrow(1)
-                        elif dif_x == -1 and dif_y == 0:
-                            self.grid.rotateArrow(3)
-                    elif arrow_direction == 3:
-                        if dif_x == -1 and dif_y == 0:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == 0 and dif_y == 1:
-                            self.grid.rotateArrow(2)
-                        elif dif_x == 0 and dif_y == -1:
-                            self.grid.rotateArrow(4)
-                    elif arrow_direction == 4:
-                        if dif_x == 0 and dif_y == -1:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == -1 and dif_y == 0:
-                            self.grid.rotateArrow(3)
-                        elif dif_x == 1 and dif_y == -1:
-                            self.grid.rotateArrow(5)
-                    else:
-                        if dif_x == 1 and dif_y == -1:
-                            self.grid.moveArrow(instance.name)
-                        elif dif_x == 0 and dif_y == -1:
-                            self.grid.rotateArrow(4)
-                        elif dif_x == 1 and dif_y == 0:
-                            self.grid.rotateArrow(0)
+                return
+        else:  # Odd row
+            if (dif_x, dif_y, 1) in [(1, 0, 1), (1, -1, 1), (0, 1, 1), (1, 1, 1), (-1, 0, 1), (0, -1, 1)]:
+                action = movements[arrow_direction].get((dif_x, dif_y, 1))
+            else:
+                return
+        if action == None:
+            print(f"Errore! dif_x: {dif_x} dif_y: {dif_y} direction: {arrow_direction} y_coord: {arrow_y} ")
+        else:
+            # Perform the appropriate action based on the direction and differences
+            if action == 'move':
+                self.grid.moveArrow(instance.name)
+            elif action.startswith('rotate_'):
+                self.grid.rotateArrow(int(action.split('_')[-1]))
+
 
     def on_start(self):
         self.container.center = Window.center
