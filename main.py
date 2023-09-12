@@ -16,7 +16,7 @@ class HexApp(App):
     def build(self):
         self.hex_size = 100
         self.hex_height = self.hex_size * 0.866
-        self.xRange = 10
+        self.xRange = 15
         self.yRange = 10
         Window.maximize()
         self.container = RelativeLayout()
@@ -40,57 +40,96 @@ class HexApp(App):
         arrow_x, arrow_y, arrow_direction = self.grid.getArrow()
         dif_x = instance.xCoord - arrow_x
         dif_y = instance.yCoord - arrow_y
+        row_even = arrow_y % 2
+        yRangeEven = self.yRange % 2
 
         # Define possible movements based on direction and differences
+        # the tuple is dif_x, dif_y, row_even, yRangeEven
         movements = {
             0: {
-                (1, 0, 1): 'move',
-                (1, 0, 0): 'move',
-                (0, -1, 0): 'rotate_5',
-                (1, -1, 1): 'rotate_5',
-                (0, 1, 0): 'rotate_1',
-                (1, 1, 1): 'rotate_1'
+                (1, 0, 1, 1): "move",
+                (1, 0, 1, 0): "move",
+                (1, 0, 0, 1): "move",
+                (1, 0, 0, 0): "move",
+                (1, -1, 0, 1): "rotate_5",
+                (0, -1, 1, 1): "rotate_5",
+                (1, -1, 1, 0): "rotate_5",
+                (0, -1, 0, 0): "rotate_5",
+                (1, 1, 0, 1): "rotate_1",
+                (0, 1, 1, 1): "rotate_1",
+                (1, 1, 1, 0): "rotate_1",
+                (0, 1, 0, 0): "rotate_1",
             },
             1: {
-                (0, 1, 0): 'move',
-                (1, 1, 1): 'move',
-                (1, 0, 0): 'rotate_0',
-                (1, 0, 1): 'rotate_0',
-                (-1, 1, 0): 'rotate_2',
-                (0, 1, 1): 'rotate_2'
+                (1, 1, 0, 1): "move",
+                (0, 1, 1, 1): "move",
+                (1, 1, 1, 0): "move",
+                (0, 1, 0, 0): "move",
+                (1, 0, 0, 1): "rotate_0",
+                (1, 0, 1, 1): "rotate_0",
+                (1, 0, 1, 0): "rotate_0",
+                (1, 0, 0, 0): "rotate_0",
+                (0, 1, 0, 1): "rotate_2",
+                (-1, 1, 0, 0): "rotate_2",
+                (-1, 1, 1, 1): "rotate_2",
+                (0, 1, 1, 0): "rotate_2",
             },
             2: {
-                (-1, 1, 0): 'move',
-                (0, 1, 1): 'move',
-                (0, 1, 0): 'rotate_1',
-                (1, 1, 1): 'rotate_1',
-                (-1, 0, 0): 'rotate_3',
-                (-1, 0, 1): 'rotate_3'
+                (0, 1, 0, 1): "move",
+                (-1, 1, 1, 1): "move",
+                (-1, 1, 0, 0): "move",
+                (0, 1, 1, 0): "move",
+                (0, 1, 1, 1): "rotate_1",
+                (1, 1, 0, 1): "rotate_1",
+                (1, 1, 1, 0): "rotate_1",
+                (0, 1, 0, 0): "rotate_1",
+                (-1, 0, 0, 1): "rotate_3",
+                (-1, 0, 1, 1): "rotate_3",
+                (-1, 0, 1, 0): "rotate_3",
+                (-1, 0, 0, 0): "rotate_3",
             },
             3: {
-                (-1, 0, 0): 'move',
-                (-1, 0, 1): 'move',
-                (-1, 1, 0): 'rotate_2',
-                (0, 1, 1): 'rotate_2',
-                (-1, -1, 0): 'rotate_4',
-                (0, -1, 1): 'rotate_4',
+                (-1, 0, 0, 1): "move",
+                (-1, 0, 1, 1): "move",
+                (-1, 0, 1, 0): "move",
+                (-1, 0, 0, 0): "move",
+                (0, 1, 0, 1): "rotate_2",
+                (-1, 1, 1, 1): "rotate_2",
+                (0, 1, 1, 0): "rotate_2",
+                (-1, 1, 0, 0): "rotate_2",
+                (0, -1, 0, 1): "rotate_4",
+                (-1, -1, 1, 1): "rotate_4",
+                (0, -1, 1, 0): "rotate_4",
+                (-1, -1, 0, 0): "rotate_4",
             },
             4: {
-                (-1, -1, 0): 'move',
-                (0, -1, 1): 'move',
-                (-1, 0, 0): 'rotate_3',
-                (-1, 0, 1): 'rotate_3',
-                (0, -1, 0): 'rotate_5',
-                (1, -1, 1): 'rotate_5'
+                (0, -1, 0, 1): "move",
+                (-1, -1, 1, 1): "move",
+                (-1, -1, 0, 0): "move",
+                (0, -1, 1, 0): "move",
+                (-1, 0, 0, 1): "rotate_3",
+                (-1, 0, 1, 1): "rotate_3",
+                (-1, 0, 1, 0): "rotate_3",
+                (-1, 0, 0, 0): "rotate_3",
+                (1, -1, 0, 1): "rotate_5",
+                (0, -1, 1, 1): "rotate_5",
+                (1, -1, 1, 0): "rotate_5",
+                (0, -1, 0, 0): "rotate_5",
             },
             5: {
-                (0, -1, 0): 'move',
-                (1, -1, 1): 'move',
-                (-1, -1, 0): 'rotate_4',
-                (0, -1, 1): 'rotate_4',
-                (1, 0, 0): 'rotate_0',
-                (1, 0, 1): 'rotate_0'
-            }
+                (1, -1, 0, 1): "move",
+                (0, -1, 1, 1): "move",
+                (1, -1, 1, 0): "move",
+                (0, -1, 0, 0): "move",
+                (0, -1, 0, 1): "rotate_4",
+                (-1, -1, 1, 1): "rotate_4",
+                (0, -1, 1, 0): "rotate_4",
+                (-1, -1, 0, 0): "rotate_4",
+                (1, 0, 0, 1): "rotate_0",
+                (1, 0, 1, 1): "rotate_0",
+                (1, 0, 1, 0): "rotate_0",
+                (1, 0, 0, 0): "rotate_0",
+            },
         }
 
         # Check if clicked hex is the one with the arrow
@@ -98,25 +137,55 @@ class HexApp(App):
             return
 
         # Conditions for contiguous hexes
-        if arrow_y % 2 == 0:  # Even row
-            if (dif_x, dif_y, 0) in [(-1, 0, 0), (-1, 1, 0), (0, 1, 0), (-1, -1, 0), (0, -1, 0), (1, 1, 0), (1, 0, 0) ]:
-                action = movements[arrow_direction].get((dif_x, dif_y, 0))
-            else:
-                return
-        else:  # Odd row
-            if (dif_x, dif_y, 1) in [(1, 0, 1), (1, -1, 1), (0, 1, 1), (1, 1, 1), (-1, 0, 1), (0, -1, 1)]:
-                action = movements[arrow_direction].get((dif_x, dif_y, 1))
-            else:
-                return
+
+        if (dif_x, dif_y, row_even, yRangeEven) in [
+            (-1, -1, 0, 0),
+            (-1, -1, 0, 1),
+            (-1, -1, 1, 1),
+            (-1, 0, 0, 0),
+            (-1, 0, 0, 1),
+            (-1, 0, 1, 0),
+            (-1, 0, 1, 1),
+            (-1, 1, 0, 0),
+            (-1, 1, 0, 1),
+            (-1, 1, 1, 1),
+            (0, -1, 0, 0),
+            (0, -1, 0, 1),
+            (0, -1, 1, 0),
+            (0, -1, 1, 1),
+            (0, 1, 0, 0),
+            (0, 1, 0, 1),
+            (0, 1, 1, 0),
+            (0, 1, 1, 1),
+            (1, -1, 0, 1),
+            (1, -1, 1, 0),
+            (1, -1, 1, 1),
+            (1, 0, 0, 0),
+            (1, 0, 0, 1),
+            (1, 0, 1, 0),
+            (1, 0, 1, 1),
+            (1, 1, 0, 1),
+            (1, 1, 1, 0),
+            (1, 1, 1, 1),
+        ]:
+            action = movements[arrow_direction].get(
+                (dif_x, dif_y, row_even, yRangeEven)
+            )
+        else:
+            # print(f"Errore! dif_x: {dif_x} dif_y: {dif_y} direction: {arrow_direction} y_coord: {arrow_y} ")
+            # print(f"({dif_x}, {dif_y}, {row_even}, {yRangeEven})")
+            return
         if action == None:
-            print(f"Errore! dif_x: {dif_x} dif_y: {dif_y} direction: {arrow_direction} y_coord: {arrow_y} ")
+            # print(
+            #     f"Errore! dif_x: {dif_x} dif_y: {dif_y} direction: {arrow_direction} y_coord: {arrow_y} "
+            # )
+            return
         else:
             # Perform the appropriate action based on the direction and differences
-            if action == 'move':
+            if action == "move":
                 self.grid.moveArrow(instance.name)
-            elif action.startswith('rotate_'):
-                self.grid.rotateArrow(int(action.split('_')[-1]))
-
+            elif action.startswith("rotate_"):
+                self.grid.rotateArrow(int(action.split("_")[-1]))
 
     def on_start(self):
         self.container.center = Window.center
