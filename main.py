@@ -1,3 +1,6 @@
+from collections import namedtuple
+from enum import Enum
+
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
@@ -6,6 +9,20 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from hexagon import Hexagon
 from hexGridLayout import HexGridLayout
+
+
+# Define an Enum for directions
+class Direction(Enum):
+    RIGHT = 0
+    DOWN_RIGHT = 1
+    DOWN_LEFT = 2
+    LEFT = 3
+    UP_LEFT = 4
+    UP_RIGHT = 5
+
+
+# Define a named tuple for the movement key
+MovementKey = namedtuple("MovementKey", ["dif_x", "dif_y", "row_even", "yRangeEven"])
 
 Config.set("graphics", "fullscreen", "auto")
 
@@ -18,34 +35,7 @@ class HexApp(App):
         self.hex_height = self.hex_size * 0.866
         self.xRange = 15
         self.yRange = 10
-        Window.maximize()
-        self.container = RelativeLayout()
-
-        # Create an instance of HexGridLayout with appropriate parameters
-        self.grid = HexGridLayout(
-            hex_size=self.hex_size, xRange=self.xRange, yRange=self.yRange
-        )
-
-        self.grid.size_hint = (None, None)
-        self.grid.size = (
-            self.hex_height * (self.xRange * 2 + 1),
-            self.hex_size * (self.yRange * 1.5)
-            + (self.hex_height - (self.hex_height * 0.866 / 2)),
-        )
-        self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
-        self.container.add_widget(self.grid)
-        return self.container
-
-    def hexClicked_handler(self, instance):
-        arrow_x, arrow_y, arrow_direction = self.grid.getArrow()
-        dif_x = instance.xCoord - arrow_x
-        dif_y = instance.yCoord - arrow_y
-        row_even = arrow_y % 2
-        yRangeEven = self.yRange % 2
-
-        # Define possible movements based on direction and differences
-        # the tuple is dif_x, dif_y, row_even, yRangeEven
-        movements = {
+        self.movements = {
             0: {
                 (1, 0, 1, 1): "move",
                 (1, 0, 1, 0): "move",
@@ -131,61 +121,87 @@ class HexApp(App):
                 (1, 0, 0, 0): "rotate_0",
             },
         }
+        Window.maximize()
+        self.container = RelativeLayout()
+
+        # Create an instance of HexGridLayout with appropriate parameters
+        self.grid = HexGridLayout(
+            hex_size=self.hex_size, xRange=self.xRange, yRange=self.yRange
+        )
+
+        self.grid.size_hint = (None, None)
+        self.grid.size = (
+            self.hex_height * (self.xRange * 2 + 1),
+            self.hex_size * (self.yRange * 1.5)
+            + (self.hex_height - (self.hex_height * 0.866 / 2)),
+        )
+        self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
+        self.container.add_widget(self.grid)
+        return self.container
+
+    def hexClicked_handler(self, instance):
+        arrow_x, arrow_y, arrow_direction = self.grid.getArrow()
+        dif_x = instance.xCoord - arrow_x
+        dif_y = instance.yCoord - arrow_y
+        row_even = arrow_y % 2
+        yRangeEven = self.yRange % 2
+
+        movement_key = MovementKey(dif_x, dif_y, row_even, yRangeEven)
 
         # Check if clicked hex is the one with the arrow
         if dif_x == 0 and dif_y == 0:
             return
 
         # Conditions for contiguous hexes
+        if movement_key in self.get_contiguous_hexes():
+            action = self.movements[arrow_direction].get(movement_key)
+            if action is None:
+                # Log error or print
+                return
+            self.perform_action(action, instance)
+        else:
+            # Log error or print
+            return
 
-        if (dif_x, dif_y, row_even, yRangeEven) in [
-            (-1, -1, 0, 0),
-            (-1, -1, 0, 1),
-            (-1, -1, 1, 1),
-            (-1, 0, 0, 0),
-            (-1, 0, 0, 1),
-            (-1, 0, 1, 0),
-            (-1, 0, 1, 1),
-            (-1, 1, 0, 0),
-            (-1, 1, 0, 1),
-            (-1, 1, 1, 1),
-            (0, -1, 0, 0),
-            (0, -1, 0, 1),
-            (0, -1, 1, 0),
-            (0, -1, 1, 1),
-            (0, 1, 0, 0),
-            (0, 1, 0, 1),
-            (0, 1, 1, 0),
-            (0, 1, 1, 1),
-            (1, -1, 0, 1),
-            (1, -1, 1, 0),
-            (1, -1, 1, 1),
-            (1, 0, 0, 0),
-            (1, 0, 0, 1),
-            (1, 0, 1, 0),
-            (1, 0, 1, 1),
-            (1, 1, 0, 1),
-            (1, 1, 1, 0),
-            (1, 1, 1, 1),
-        ]:
-            action = movements[arrow_direction].get(
-                (dif_x, dif_y, row_even, yRangeEven)
-            )
-        else:
-            # print(f"Errore! dif_x: {dif_x} dif_y: {dif_y} direction: {arrow_direction} y_coord: {arrow_y} ")
-            # print(f"({dif_x}, {dif_y}, {row_even}, {yRangeEven})")
-            return
-        if action == None:
-            # print(
-            #     f"Errore! dif_x: {dif_x} dif_y: {dif_y} direction: {arrow_direction} y_coord: {arrow_y} "
-            # )
-            return
-        else:
-            # Perform the appropriate action based on the direction and differences
-            if action == "move":
-                self.grid.moveArrow(instance.name)
-            elif action.startswith("rotate_"):
-                self.grid.rotateArrow(int(action.split("_")[-1]))
+    def perform_action(self, action, instance):
+        if action == "move":
+            self.grid.moveArrow(instance.name)
+        elif action.startswith("rotate_"):
+            self.grid.rotateArrow(int(action.split("_")[-1]))
+
+    def get_contiguous_hexes(self):
+        # All possible contiguous movements for both even and odd rows
+        contiguous_movements = [
+            MovementKey(-1, -1, 0, 0),
+            MovementKey(-1, -1, 0, 1),
+            MovementKey(-1, -1, 1, 1),
+            MovementKey(-1, 0, 0, 0),
+            MovementKey(-1, 0, 0, 1),
+            MovementKey(-1, 0, 1, 0),
+            MovementKey(-1, 0, 1, 1),            
+            MovementKey(-1, 1, 0, 0),
+            MovementKey(-1, 1, 0, 1),
+            MovementKey(-1, 1, 1, 1),
+            MovementKey(0, -1, 0, 0),
+            MovementKey(0, -1, 0, 1),
+            MovementKey(0, -1, 1, 0),
+            MovementKey(0, -1, 1, 1),
+            MovementKey(0, 1, 0, 0),
+            MovementKey(0, 1, 0, 1),
+            MovementKey(0, 1, 1, 0),
+            MovementKey(0, 1, 1, 1),
+            MovementKey(1, -1, 0, 1),
+            MovementKey(1, -1, 1, 0),
+            MovementKey(1, -1, 1, 1),
+            MovementKey(1, 0, 0, 0),
+            MovementKey(1, 0, 0, 1),
+            MovementKey(1, 0, 1, 0),
+            MovementKey(1, 0, 1, 1),
+            MovementKey(1, 1, 0, 1),
+            MovementKey(1, 1, 1, 0),
+            MovementKey(1, 1, 1, 1),
+        ]
+        return contiguous_movements
 
     def on_start(self):
         self.container.center = Window.center
