@@ -19,6 +19,7 @@ class HexGridLayout(FloatLayout):
 
         # Set size and position hints
         self.size_hint = (None, None)
+
         if self.versus == HexGridType.HORIZONTAL:
             self.size = (
                 self.hex_height * (self.xRange * 2 + 1),
@@ -27,10 +28,10 @@ class HexGridLayout(FloatLayout):
             )
         else:
             self.size = (
-                self.hex_size * (self.yRange * 1.5)
-                + (self.hex_height - (self.hex_height * 0.866 / 2)),
-                self.hex_height * (self.xRange * 2 + 1),
+                self.hex_size * self.xRange + self.hex_size*0.866 * (self.xRange/2 + self.xRange%2),
+                self.hex_size * 0.866 * 2 * self.yRange + self.hex_size*0.866/2
             )
+
         self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
 
         self.arrow = Arrow(self.versus)

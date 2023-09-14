@@ -16,8 +16,8 @@ class HexApp(App):
     def build(self):
         self.hex_size = 100
         self.hex_height = self.hex_size * 0.866
-        self.xRange = 9
-        self.yRange = 10
+        self.xRange = 11
+        self.yRange = 11
 
         Window.maximize()
         self.container = RelativeLayout()
@@ -27,7 +27,7 @@ class HexApp(App):
             hex_size=self.hex_size,
             xRange=self.xRange,
             yRange=self.yRange,
-            versus=HexGridType.VERTICAL,
+            versus=HexGridType.HORIZONTAL,
         )
 
         self.horizontalGridOddRowRange = [
@@ -57,13 +57,7 @@ class HexApp(App):
             # odd cols
             [[+1, +1], [0, +1], [-1, +1], [-1, 0], [0, -1], [+1, 0]],
         ]
-
-        self.grid.size_hint = (None, None)
-        self.grid.size = (
-            self.hex_height * (self.xRange * 2 + 1),
-            self.hex_size * (self.yRange * 1.5)
-            + (self.hex_height - (self.hex_height * 0.866 / 2)),
-        )
+        
         self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
         self.container.add_widget(self.grid)
         return self.container
