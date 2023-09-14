@@ -2,27 +2,35 @@ from kivy.uix.floatlayout import FloatLayout
 
 from arrow import Arrow
 from hexagon import Hexagon
-
+from definition import *
 
 class HexGridLayout(FloatLayout):
-    def __init__(self, hex_size=100, xRange=11, yRange=12, **kwargs):
+    def __init__(self, hex_size=100, xRange=1, yRange=1, versus=HexGridType.HORIZONTAL, **kwargs):
         super().__init__(**kwargs)
 
         self.hex_size = hex_size
         self.hex_height = self.hex_size * 0.866
         self.xRange = xRange
         self.yRange = yRange
+        self.versus = versus
 
         # Set size and position hints
         self.size_hint = (None, None)
-        self.size = (
-            self.hex_height * (self.xRange * 2 + 1),
-            self.hex_size * (self.yRange * 1.5)
-            + (self.hex_height - (self.hex_height * 0.866 / 2)),
-        )
+        if self.versus == HexGridType.HORIZONTAL:
+            self.size = (
+                self.hex_height * (self.xRange * 2 + 1),
+                self.hex_size * (self.yRange * 1.5)
+                + (self.hex_height - (self.hex_height * 0.866 / 2)),
+            )
+        else:
+            self.size = (
+                self.hex_size * (self.yRange * 1.5)
+                + (self.hex_height - (self.hex_height * 0.866 / 2)),
+                self.hex_height * (self.xRange * 2 + 1)
+            )
         self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
 
-        self.arrow = Arrow()
+        self.arrow = Arrow(self.versus)
 
     def create_hex(self, center_x, center_y, *args):
         for x in range(self.xRange):
@@ -42,15 +50,22 @@ class HexGridLayout(FloatLayout):
                     y,
                     self.xRange,
                     self.yRange,
+                    self.versus
                 )
-                hexagon.pos = (
-                    x * (self.hex_height * 2)
-                    + ((y + 1) % 2 * self.hex_height)
-                    + center_x
-                    - self.width / 2
-                    - (self.hex_size - self.hex_height),
-                    (y * self.hex_size * 1.5) + center_y - self.height / 2,
-                )
+                if self.versus == HexGridType.HORIZONTAL:
+                    hexagon.pos = (
+                        x * (self.hex_height * 2)
+                        + ((y + 1) % 2 * self.hex_height)
+                        + center_x
+                        - self.width / 2
+                        - (self.hex_size - self.hex_height),
+                        (y * self.hex_size * 1.5) + center_y - self.height / 2,
+                    )
+                else:
+                    hexagon.pos = (
+                x * (self.hex_size * 1.5) + center_x - self.width / 2,
+                y * (self.hex_height * 2) + ((x + 1) % 2 * self.hex_height) + center_y - self.height / 2 - (self.hex_size - self.hex_height)
+            )
                 new_id = f"hex_{x}_{self.yRange - y -1}"
                 self.ids[new_id] = hexagon
                 self.add_widget(hexagon)

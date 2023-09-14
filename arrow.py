@@ -5,12 +5,13 @@ from kivy.uix.button import Button
 from kivy.uix.relativelayout import RelativeLayout
 
 from hexagon import Hexagon
+from definition import HexGridType
 
 
 class Arrow(RelativeLayout):
-    def __init__(self, **kwargs):
+    def __init__(self, versus, **kwargs):
         super().__init__(**kwargs)
-
+        self.versus = versus
         # Create a button with the image texture
         self.arrow_button = Button(
             background_normal="freccia.png",
@@ -25,6 +26,11 @@ class Arrow(RelativeLayout):
         self.xCoord = -1
         self.yCoord = -1
         self.direction = 0
+        if self.versus == HexGridType.VERTICAL:
+             with self.arrow_button.canvas.before:
+                # Apply the rotation
+                Rotate(angle=-30, origin=self.arrow_button.center)
+
 
     def moveArrow(self, center, xCoord, yCoord):
         self.center = center

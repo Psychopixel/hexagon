@@ -24,6 +24,7 @@ class Hexagon(RelativeLayout):
         y,
         xRange,
         yRange,
+        versus,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -40,6 +41,7 @@ class Hexagon(RelativeLayout):
 
         self.xRange = xRange
         self.yRange = yRange
+        self.versus = versus
         self.xCoord = x
         self.yCoord = self.yRange - y - 1
 
@@ -65,7 +67,7 @@ class Hexagon(RelativeLayout):
         with self.canvas.before:
             self.canvas.clear()
             Color(self.r, self.g, self.b, self.a)
-            triangleVertices, self.vertices, indices = self.build_mesh(pi / 2)
+            triangleVertices, self.vertices, indices = self.build_mesh(rotation=self.versus)
 
             mesh = Mesh(vertices=triangleVertices, indices=indices)
             mesh.mode = "triangle_fan"
