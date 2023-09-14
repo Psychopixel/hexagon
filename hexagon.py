@@ -25,6 +25,9 @@ class Hexagon(RelativeLayout):
         xRange,
         yRange,
         versus,
+        terrain=None,
+        color=None,
+        content=None,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -45,6 +48,10 @@ class Hexagon(RelativeLayout):
         self.xCoord = x
         self.yCoord = self.yRange - y - 1
 
+        self.terrain = terrain
+        self.hex_color = color if color else (bg_r, bg_g, bg_b, bg_a)
+        self.content = content  
+
         self.coords_label = Label()
         self.coords_label.color = (1, 1, 1, 1)
         self.size_hint = (None, None)
@@ -63,10 +70,17 @@ class Hexagon(RelativeLayout):
         self.coords_label.pos = (self.hex_size / 2, self.hex_size / 2)
         self.name = f"hex_{self.xCoord}_{self.yCoord}"
 
+    def convert_to_kivy_color(self, rgba):
+        r, g, b, a = rgba
+        return r / 255.0, g / 255.0, b / 255.0, a
+
     def redraw(self):
         with self.canvas.before:
             self.canvas.clear()
-            Color(self.r, self.g, self.b, self.a)
+            # Using self.hex_color to set the color for drawing
+            r, g, b, a = self.convert_to_kivy_color(self.hex_color)
+            Color(r, g, b, a)
+        
             triangleVertices, self.vertices, indices = self.build_mesh(
                 rotation=self.versus
             )
@@ -110,7 +124,6 @@ class Hexagon(RelativeLayout):
                 point, self.v3, self.v4, self.v6, self.v1
             )
         ):
-            # print("Hex " + self.coords_label.text + " was touched!")
             # Dispatch the custom event
             self.dispatch("on_hex_clicked_event")
 
@@ -122,8 +135,7 @@ class Hexagon(RelativeLayout):
 
     def on_hex_clicked_event(self, *args):
         # Set the bubbled property to True to propagate the event
-        self.bubbled = True
-        # print(f"{self.coords_label.text} dispatched on_hex_clicked_event!")
+        pass
 
     def build_mesh(self, rotation=0.0):
         # returns a Mesh of a rough circle with rotation.
@@ -153,3 +165,22 @@ class Hexagon(RelativeLayout):
         indices.extend([0, step, 1])  # to close the circle
 
         return triangleVertices, vertices, indices
+    
+    def get_attributes(self):
+        # Retrieve the attributes of the hexagon.
+        return {
+            "terrain": self.terrain,
+            "color": self.hex_color,
+            "content": self.content,
+        }
+
+    def set_attributes(self, terrain=None, color=None, content=None):
+        # Modify the attributes of the hexagon.
+        if terrain:
+            self.terrain = terrain
+        if color:
+            self.hex_color = color
+            self.r, self.g, self.b, self.a = color  # Update the hexagon's display color
+            self.redraw()  # Redraw the hexagon with the new color
+        if content:
+            self.content = content

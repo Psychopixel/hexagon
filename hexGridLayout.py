@@ -1,3 +1,5 @@
+import json
+
 from kivy.uix.floatlayout import FloatLayout
 
 from arrow import Arrow
@@ -65,14 +67,27 @@ class HexGridLayout(FloatLayout):
 
         self.arrow = Arrow(self.versus)
 
-    def create_hex(self, center_x, center_y, *args):
+
+    def load_hex_data(self, filename="hex_data.json"):
+        try:
+            with open(filename, "r") as file:
+                data = json.load(file)
+            return data
+        except Exception as e:
+            print(f"Error loading hex data: {e}")
+            return {}
+
+    def create_hex(self, center_x, center_y, hex_data, *args):
+        hex_data = self.load_hex_data()
         for x in range(self.xRange):
             for y in range(self.yRange):
+                hex_id = f"hex_{x}_{self.yRange - y -1}"
+                hex_attrs = hex_data.get(hex_id, {})
                 hexagon = Hexagon(
                     self.hex_size,
-                    x % 2,
                     0,
-                    y % 2,
+                    0,
+                    125,
                     1,
                     0,
                     0,
@@ -84,6 +99,9 @@ class HexGridLayout(FloatLayout):
                     self.xRange,
                     self.yRange,
                     self.versus,
+                    terrain=hex_attrs.get("terrain", ""),
+                    color=hex_attrs.get("color", None),
+                    content=hex_attrs.get("content", ""),
                 )
                 if self.versus == HexGridType.HORIZONTAL:
                     hexagon.pos = (

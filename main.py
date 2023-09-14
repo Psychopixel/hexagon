@@ -14,10 +14,10 @@ from kivy.app import App
 
 class HexApp(App):
     def build(self):
-        self.hex_size = 100
+        self.hex_size = 75
         self.hex_height = self.hex_size * 0.866
-        self.xRange = 11
-        self.yRange = 11
+        self.xRange = 25
+        self.yRange = 17
 
         Window.maximize()
         self.container = RelativeLayout()
@@ -49,7 +49,9 @@ class HexApp(App):
 
     def on_start(self):
         self.container.center = Window.center
-        self.grid.create_hex(self.container.center_x, self.container.center_y)
+        self.grid.create_hex(
+            self.container.center_x, self.container.center_y, hex_data={}
+        )
         for hex in self.grid.children:
             hex.bind(on_hex_clicked_event=self.hexClicked_handler)
         self.grid.create_arrow()
