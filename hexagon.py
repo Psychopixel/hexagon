@@ -50,7 +50,7 @@ class Hexagon(RelativeLayout):
 
         self.terrain = terrain
         self.hex_color = color if color else (bg_r, bg_g, bg_b, bg_a)
-        self.content = content  
+        self.content = content
 
         self.coords_label = Label()
         self.coords_label.color = (1, 1, 1, 1)
@@ -80,7 +80,7 @@ class Hexagon(RelativeLayout):
             # Using self.hex_color to set the color for drawing
             r, g, b, a = self.convert_to_kivy_color(self.hex_color)
             Color(r, g, b, a)
-        
+
             triangleVertices, self.vertices, indices = self.build_mesh(
                 rotation=self.versus
             )
@@ -165,7 +165,7 @@ class Hexagon(RelativeLayout):
         indices.extend([0, step, 1])  # to close the circle
 
         return triangleVertices, vertices, indices
-    
+
     def get_attributes(self):
         # Retrieve the attributes of the hexagon.
         return {

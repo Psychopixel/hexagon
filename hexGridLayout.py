@@ -67,7 +67,6 @@ class HexGridLayout(FloatLayout):
 
         self.arrow = Arrow(self.versus)
 
-
     def load_hex_data(self, filename="hex_data.json"):
         try:
             with open(filename, "r") as file:
