@@ -4,8 +4,8 @@ from kivy.graphics import Color, Rectangle, Rotate
 from kivy.uix.button import Button
 from kivy.uix.relativelayout import RelativeLayout
 
-from hexagon import Hexagon
 from definition import HexGridType
+from hexagon import Hexagon
 
 
 class Arrow(RelativeLayout):
@@ -27,10 +27,9 @@ class Arrow(RelativeLayout):
         self.yCoord = -1
         self.direction = 0
         if self.versus == HexGridType.VERTICAL:
-             with self.arrow_button.canvas.before:
+            with self.arrow_button.canvas.before:
                 # Apply the rotation
                 Rotate(angle=-30, origin=self.arrow_button.center)
-
 
     def moveArrow(self, center, xCoord, yCoord):
         self.center = center

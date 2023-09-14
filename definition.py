@@ -1,6 +1,7 @@
 from enum import Enum
 from math import pi
 
+
 # Define an Enum for directions
 class Direction(Enum):
     RIGHT = 0
@@ -10,7 +11,8 @@ class Direction(Enum):
     UP_LEFT = 4
     UP_RIGHT = 5
 
+
 # define the type of hex grid
-class HexGridType():
-    HORIZONTAL = pi/2
-    VERTICAL = 0.
+class HexGridType:
+    HORIZONTAL = pi / 2
+    VERTICAL = 0.0

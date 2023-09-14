@@ -1,11 +1,14 @@
 from kivy.uix.floatlayout import FloatLayout
 
 from arrow import Arrow
-from hexagon import Hexagon
 from definition import *
+from hexagon import Hexagon
+
 
 class HexGridLayout(FloatLayout):
-    def __init__(self, hex_size=100, xRange=1, yRange=1, versus=HexGridType.HORIZONTAL, **kwargs):
+    def __init__(
+        self, hex_size=100, xRange=1, yRange=1, versus=HexGridType.HORIZONTAL, **kwargs
+    ):
         super().__init__(**kwargs)
 
         self.hex_size = hex_size
@@ -26,7 +29,7 @@ class HexGridLayout(FloatLayout):
             self.size = (
                 self.hex_size * (self.yRange * 1.5)
                 + (self.hex_height - (self.hex_height * 0.866 / 2)),
-                self.hex_height * (self.xRange * 2 + 1)
+                self.hex_height * (self.xRange * 2 + 1),
             )
         self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
 
@@ -50,7 +53,7 @@ class HexGridLayout(FloatLayout):
                     y,
                     self.xRange,
                     self.yRange,
-                    self.versus
+                    self.versus,
                 )
                 if self.versus == HexGridType.HORIZONTAL:
                     hexagon.pos = (
@@ -63,9 +66,13 @@ class HexGridLayout(FloatLayout):
                     )
                 else:
                     hexagon.pos = (
-                x * (self.hex_size * 1.5) + center_x - self.width / 2,
-                y * (self.hex_height * 2) + ((x + 1) % 2 * self.hex_height) + center_y - self.height / 2 - (self.hex_size - self.hex_height)
-            )
+                        x * (self.hex_size * 1.5) + center_x - self.width / 2,
+                        y * (self.hex_height * 2)
+                        + ((x + 1) % 2 * self.hex_height)
+                        + center_y
+                        - self.height / 2
+                        - (self.hex_size - self.hex_height),
+                    )
                 new_id = f"hex_{x}_{self.yRange - y -1}"
                 self.ids[new_id] = hexagon
                 self.add_widget(hexagon)

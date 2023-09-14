@@ -67,7 +67,9 @@ class Hexagon(RelativeLayout):
         with self.canvas.before:
             self.canvas.clear()
             Color(self.r, self.g, self.b, self.a)
-            triangleVertices, self.vertices, indices = self.build_mesh(rotation=self.versus)
+            triangleVertices, self.vertices, indices = self.build_mesh(
+                rotation=self.versus
+            )
 
             mesh = Mesh(vertices=triangleVertices, indices=indices)
             mesh.mode = "triangle_fan"

@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
@@ -8,9 +6,6 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from definition import *
 from hexGridLayout import HexGridLayout
-
-# Define a named tuple for the movement key
-MovementKey = namedtuple("MovementKey", ["dif_x", "dif_y", "row_even", "yRangeEven"])
 
 Config.set("graphics", "fullscreen", "auto")
 
@@ -23,43 +18,45 @@ class HexApp(App):
         self.hex_height = self.hex_size * 0.866
         self.xRange = 9
         self.yRange = 10
-        
+
         Window.maximize()
         self.container = RelativeLayout()
 
         # Create an instance of HexGridLayout with appropriate parameters
         self.grid = HexGridLayout(
-            hex_size=self.hex_size, xRange=self.xRange, yRange=self.yRange, versus=HexGridType.VERTICAL
+            hex_size=self.hex_size,
+            xRange=self.xRange,
+            yRange=self.yRange,
+            versus=HexGridType.VERTICAL,
         )
 
         self.horizontalGridOddRowRange = [
-            # even rows 
-            [[+1,  0], [+1, +1], [ 0, +1], [-1,  0], [ 0, -1], [+1, -1]],
-            # odd rows 
-            [[+1,  0], [ 0, +1], [-1, +1], [-1,  0], [-1, -1], [ 0, -1]],
+            # even rows
+            [[+1, 0], [+1, +1], [0, +1], [-1, 0], [0, -1], [+1, -1]],
+            # odd rows
+            [[+1, 0], [0, +1], [-1, +1], [-1, 0], [-1, -1], [0, -1]],
         ]
 
         self.horizontalGridEvenRowRange = [
-            # even rows 
-            [[+1,  0], [ 0, +1], [-1, +1], [-1,  0], [-1, -1], [ 0, -1]],
-            # odd rows 
-            [[+1,  0], [ +1, +1], [0, +1],  [-1,  0], [ 0, -1], [+1, -1]],
+            # even rows
+            [[+1, 0], [0, +1], [-1, +1], [-1, 0], [-1, -1], [0, -1]],
+            # odd rows
+            [[+1, 0], [+1, +1], [0, +1], [-1, 0], [0, -1], [+1, -1]],
         ]
 
         self.verticalGridOddColRange = [
-            # even cols 
-            [[+1,  0], [ 0, +1], [-1,  0], [-1, -1], [ 0, -1], [+1, -1]],
-            # odd cols 
-            [[+1, +1], [ 0, +1], [-1, +1], [-1,  0], [ 0, -1], [+1,  0]],
+            # even cols
+            [[+1, 0], [0, +1], [-1, 0], [-1, -1], [0, -1], [+1, -1]],
+            # odd cols
+            [[+1, +1], [0, +1], [-1, +1], [-1, 0], [0, -1], [+1, 0]],
         ]
 
         self.verticalGridEvenColRange = [
             # even cols
-            [[+1,  0], [ 0, +1], [-1,  0], [-1, -1], [ 0, -1], [+1, -1]],
-            # odd cols 
-            [[+1, +1], [ 0, +1], [-1, +1], [-1,  0], [ 0, -1], [+1,  0]],
+            [[+1, 0], [0, +1], [-1, 0], [-1, -1], [0, -1], [+1, -1]],
+            # odd cols
+            [[+1, +1], [0, +1], [-1, +1], [-1, 0], [0, -1], [+1, 0]],
         ]
-
 
         self.grid.size_hint = (None, None)
         self.grid.size = (
@@ -70,7 +67,7 @@ class HexApp(App):
         self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
         self.container.add_widget(self.grid)
         return self.container
-    
+
     def getAllContiguos(self, yRange, xRange, arrow_y, arrow_x, gridVersus):
         neibourghs = []
         parity_row = arrow_y & 1
@@ -79,59 +76,43 @@ class HexApp(App):
         odd = 1
         if gridVersus == HexGridType.HORIZONTAL:
             # odd_r or even_r
-            # print("Horizontal")
-            if yRange%2==0:
+            if yRange % 2 == 0:
                 # even_r
-                # print("Even_r")
                 if parity_row == 0:
-                    # print("even row")
                     # even row
                     neibourghs = self.horizontalGridEvenRowRange[even].copy()
                 else:
-                    # print("odd row")
                     # odd row
                     neibourghs = self.horizontalGridEvenRowRange[odd].copy()
             else:
-                # print("Odd_r")
                 # odd_r
                 if parity_row == 0:
-                    # print("even row")
                     # even row
                     neibourghs = self.horizontalGridOddRowRange[even].copy()
                 else:
-                    # print("odd row")
                     # odd row
                     neibourghs = self.horizontalGridOddRowRange[odd].copy()
         else:
-            # print("Vertical")
             # odd_q or even_q
-            if xRange%2==0:
-                # print("Even_q")
+            if xRange % 2 == 0:
                 # even_q
                 if parity_col == 0:
-                    # print("even col")
                     # even col
                     neibourghs = self.verticalGridEvenColRange[even].copy()
                 else:
-                    # print("odd col")
                     # odd col
                     neibourghs = self.verticalGridEvenColRange[odd].copy()
             else:
-                # print("Odd_q")
                 # odd_q
                 if parity_col == 0:
-                    # print("even col")
                     # even col
-                    neibourghs= self.verticalGridOddColRange[even].copy()
+                    neibourghs = self.verticalGridOddColRange[even].copy()
                 else:
-                    # print("odd col")
                     # odd col
-                    neibourghs= self.verticalGridOddColRange[odd].copy()
+                    neibourghs = self.verticalGridOddColRange[odd].copy()
         return neibourghs
 
     def getPossibleHex(self, contiguos, direction):
-        # print(f"contiguos: {contiguos}")
-        # print(f"direction {direction}")
         if direction == 0:
             clickable = [contiguos[5], contiguos[0], contiguos[1]]
         elif direction == 1:
@@ -144,20 +125,19 @@ class HexApp(App):
             clickable = [contiguos[3], contiguos[4], contiguos[5]]
         else:
             clickable = [contiguos[4], contiguos[5], contiguos[0]]
-        # print(f"clickable: {clickable}")
         return clickable
-        
+
     def getMove(self, possibleHex, hexClicked, arrow_x, arrow_y, direction):
         cnt = 0
         for possible in possibleHex:
-            newHex = [possible[0]+ arrow_x, possible[1]+arrow_y]
+            newHex = [possible[0] + arrow_x, possible[1] + arrow_y]
             if newHex == hexClicked:
-                if cnt==0:
+                if cnt == 0:
                     newDirection = direction - 1
                     if newDirection < 0:
                         newDirection = 5
                     return f"rotate_{newDirection}"
-                elif cnt==1:
+                elif cnt == 1:
                     return "move"
                 else:
                     newDirection = direction + 1
@@ -170,7 +150,22 @@ class HexApp(App):
     def hexClicked_handler(self, instance):
         arrow_x, arrow_y, arrow_direction = self.grid.getArrow()
 
-        move = self.getMove(self.getPossibleHex(self.getAllContiguos(yRange=self.yRange, xRange=self.xRange, arrow_x=arrow_x, arrow_y=arrow_y, gridVersus=self.grid.versus), direction=arrow_direction), [instance.xCoord,instance.yCoord], arrow_x=arrow_x, arrow_y=arrow_y, direction=arrow_direction)
+        move = self.getMove(
+            self.getPossibleHex(
+                self.getAllContiguos(
+                    yRange=self.yRange,
+                    xRange=self.xRange,
+                    arrow_x=arrow_x,
+                    arrow_y=arrow_y,
+                    gridVersus=self.grid.versus,
+                ),
+                direction=arrow_direction,
+            ),
+            [instance.xCoord, instance.yCoord],
+            arrow_x=arrow_x,
+            arrow_y=arrow_y,
+            direction=arrow_direction,
+        )
         if move == None:
             return
         else:
@@ -181,8 +176,6 @@ class HexApp(App):
             self.grid.moveArrow(instance.name)
         elif action.startswith("rotate_"):
             self.grid.rotateArrow(int(action.split("_")[-1]))
-
-    
 
     def on_start(self):
         self.container.center = Window.center
