@@ -136,7 +136,7 @@ class Hexagon(RelativeLayout):
                 # Positioning the image
                 pos_x = 0
                 # XXXXXXXXXX Why 14?
-                pos_y = 14
+                pos_y = 10
                 Color(1, 1, 1, 1)  # Reset to white color for the image
 
                 if self.versus == HexGridType.HORIZONTAL:

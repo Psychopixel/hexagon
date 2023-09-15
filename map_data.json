@@ -1,6 +1,6 @@
 {
     "_comment": "orientation could be VERTICAL or HORIZONTAL",
-    "map": {"orientation": "VERTICAL", "hex_radius": 100, "xRange": 10, "yRange": 10, "start_hex": "hex_4_1", "start_direction": 0, "backgroundColor": [0.15, 0.15, 0.15, 1]},
+    "map": {"orientation": "VERTICAL", "hex_radius": 75, "xRange": 10, "yRange": 10, "start_hex": "hex_4_1", "start_direction": 0, "backgroundColor": [0.15, 0.15, 0.15, 1]},
     "default_hex": {"background_color": [0, 0, 125, 1], "stroke_color": [1, 0, 0, 1], "stroke_thickness": 1},
     "hex_0_0": {"terrain": "Mountain.png", "fogOfWar": "True", "color": [15, 107, 3, 1], "walkable": "False", "label": "False"},
     "hex_0_1": {"terrain": "Mountain.png", "fogOfWar": "True", "color": [15, 107, 3, 1], "walkable": "False", "label": "False"},
