@@ -13,9 +13,10 @@ class Arrow(RelativeLayout):
         super().__init__(**kwargs)
         self.versus = versus
         # Create a button with the image texture
+        path = f".\images\\"
         self.arrow_button = Button(
-            background_normal="freccia.png",
-            background_down="freccia.png",
+            background_normal=f"{path}freccia.png",
+            background_down=f"{path}freccia.png",
             size_hint=(None, None),
         )
 

@@ -140,6 +140,7 @@ class HexGridLayout(FloatLayout):
         pass
 
     def setArrow(self, hex, direction):
+        self.ids[hex].setFogOfWar(False)
         self.arrow.moveArrow(
             self.getHexCenter(hex), self.ids[hex].xCoord, self.ids[hex].yCoord
         )

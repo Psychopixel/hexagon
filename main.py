@@ -19,12 +19,12 @@ F_HEX = 0.866025404
 class HexApp(App):
     def build(self):
         map_data = self.load_map_data()
-        map_attrs = map_data.get("map", {})
-        if map_attrs:
-            self.hex_radius = map_attrs.get("hex_radius", 75)
-            self.xRange = map_attrs.get("xRange", 10)
-            self.yRange = map_attrs.get("yRange", 10)
-            orientation = map_attrs.get("orientation", "VERTICAL")
+        self.map_attrs = map_data.get("map", {})
+        if self.map_attrs:
+            self.hex_radius = self.map_attrs.get("hex_radius", 75)
+            self.xRange = self.map_attrs.get("xRange", 10)
+            self.yRange = self.map_attrs.get("yRange", 10)
+            orientation = self.map_attrs.get("orientation", "VERTICAL")
             if orientation == "VERTICAL":
                 self.versus = HexGridType.VERTICAL
             else:
@@ -85,9 +85,12 @@ class HexApp(App):
         for hex in self.grid.children:
             hex.bind(on_hex_clicked_event=self.hexClicked_handler)
         self.grid.create_arrow()
-        self.grid.setArrow("hex_5_5", 0)
+        start_hex = self.map_attrs.get("start_hex", "hex_5_5")
+        start_direction = self.map_attrs.get("start_direction", 0)
+        r, g, b, a = self.map_attrs.get("backgroundColor", [0.15, 0.15, 0.15, 1])
+        self.grid.setArrow(start_hex, start_direction)
         # app background color
-        self.coloraSfondo(self.root, 0.15, 0.15, 0.15, 1)
+        self.coloraSfondo(self.root, r, g, b, a)
 
         return super().on_start()
 
