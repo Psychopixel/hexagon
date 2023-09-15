@@ -14,13 +14,14 @@ Config.set("graphics", "fullscreen", "auto")
 
 from kivy.app import App
 
+F_HEX = 0.866025404
 
 class HexApp(App):
     def build(self):
         map_data = self.load_map_data()
         map_attrs = map_data.get("map", {})
         if map_attrs:
-            self.hex_size = map_attrs.get("hex_size", 75)
+            self.hex_radius = map_attrs.get("hex_radius", 75)
             self.xRange = map_attrs.get("xRange", 10)
             self.yRange = map_attrs.get("yRange", 10)
             orientation = map_attrs.get("orientation", "VERTICAL")
@@ -29,18 +30,19 @@ class HexApp(App):
             else:
                 self.versus = HexGridType.HORIZONTAL
         else:
-            self.hex_size = 100
-            self.xRange = 20
+            self.hex_radius = 100
+            self.xRange = 10
             self.yRange = 10
+            self.versus = HexGridType.VERTICAL
 
-        self.hex_height = self.hex_size * 0.866
+        self.hex_innerRadius = self.hex_radius * F_HEX
 
         Window.maximize()
         self.container = RelativeLayout()
 
         # Create an instance of HexGridLayout with appropriate parameters
         self.grid = HexGridLayout(
-            hex_size=self.hex_size,
+            hex_radius=self.hex_radius,
             xRange=self.xRange,
             yRange=self.yRange,
             versus=self.versus,
@@ -61,9 +63,10 @@ class HexApp(App):
 
     def hexClicked_handler(self, instance:Hexagon):
         move = self.grid.calculateMove(instance)
-        if not instance.walkable and (move == "move" or move == "move_back"):
-            return
         if move == None:
+            return
+        instance.setFogOfWar(False)
+        if not instance.walkable and (move == "move" or move == "move_back"):
             return
         else:
             self.perform_action(move, instance)

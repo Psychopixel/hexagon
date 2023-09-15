@@ -7,13 +7,13 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from definition import *
 
-F_HEX = 0.866
+F_HEX = 0.866025404
 
 
 class Hexagon(RelativeLayout):
     def __init__(
         self,
-        hex_size,
+        hex_radius,
         bg_r,
         bg_g,
         bg_b,
@@ -32,10 +32,11 @@ class Hexagon(RelativeLayout):
         color=None,
         walkable=True,
         showLabel=True,
+        fogOfWar=True,
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.hex_size = hex_size
+        self.hex_radius = hex_radius
         self.r = bg_r
         self.g = bg_g
         self.b = bg_b
@@ -55,31 +56,53 @@ class Hexagon(RelativeLayout):
         self.terrain = terrain
         self.hex_color = color if color else (bg_r, bg_g, bg_b, bg_a)
         self.walkable = walkable
+        self.fogOfWar = fogOfWar
         self.texture = None
         if self.terrain:
             # Load the image into a texture
-            self.texture = Image(f".\images\{self.terrain}").texture
+            self.imageTexture = Image(f".\images\{self.terrain}").texture
             # Ensure the texture repeats instead of stretching
-            self.texture.wrap = "repeat"
+            self.imageTexture.wrap = "repeat"
         self.showLabel=showLabel
+        self.fogOfWarTexture = Image(f".\images\FogOfWar.png").texture
+        # Ensure the texture repeats instead of stretching
+        self.fogOfWarTexture.wrap = "repeat"
 
         self.coords_label = Label()
         self.coords_label.color = (1, 1, 1, 1)
+        
         self.size_hint = (None, None)
-        self.hex_height = self.hex_size * 0.866
-        self.size = (self.hex_size, self.hex_height)
+        self.hex_innerRadius = self.hex_radius * F_HEX
+        self.size = (self.hex_radius, self.hex_innerRadius)
         # Bind label to update whenever x or y changes
         self.bind(x=self.update_label, y=self.update_label)
+        self.setFogOfWar(self.fogOfWar)
         self.redraw()
-        if self.showLabel:
+
+        if self.showLabel and not self.coords_label in self.children:
             self.add_widget(self.coords_label)
 
         # Register the custom event
         self.register_event_type("on_hex_clicked_event")
 
+    def setFogOfWar(self, fogOfWar):
+        self.fogOfWar = fogOfWar
+        if self.fogOfWar:
+            self.texture = self.fogOfWarTexture
+        else:
+            if self.terrain:
+                self.texture = self.imageTexture
+            else:
+                self.texture = None
+        self.redraw()
+        if self.showLabel:
+            if self.coords_label in self.children:
+                self.remove_widget(self.coords_label)
+            self.add_widget(self.coords_label)
+
     def update_label(self, instance, value):
         self.coords_label.text = f"({self.xCoord}, {self.yCoord})"
-        self.coords_label.pos = (self.hex_size / 2, self.hex_size / 2)
+        self.coords_label.pos = (self.hex_radius / 2, self.hex_radius / 2)
         self.name = f"hex_{self.xCoord}_{self.yCoord}"
 
     def convert_to_kivy_color(self, rgba):
@@ -102,16 +125,17 @@ class Hexagon(RelativeLayout):
             if self.stroke_tickness > 0:
                 Color(self.stroke_r, self.stroke_g, self.stroke_b, self.stroke_a)
                 Line(points=self.vertices, width=self.stroke_tickness)
-            # Draw the image (if provided) inside the hexagon
+            # Draw the image (if provided) inside the hexagon if visible
             if self.texture:
                 # The scaling factor ensures the image fits inside the hexagon
                 scale_factor = (
-                    self.hex_size * 2.0 / max(self.texture.width, self.texture.height)
+                    self.hex_radius * 2.0 / max(self.texture.width, self.texture.height)
                 )
                 scaled_width = self.texture.width * scale_factor
                 scaled_height = self.texture.height * scale_factor
                 # Positioning the image
                 pos_x = 0
+                # XXXXXXXXXX Why 14?
                 pos_y = 14
                 Color(1, 1, 1, 1)  # Reset to white color for the image
 
@@ -189,16 +213,16 @@ class Hexagon(RelativeLayout):
         istep = (pi * 2) / float(step)
 
         # Center point of the circle
-        triangleVertices.extend([self.hex_size, self.hex_size, 0, 0])
+        triangleVertices.extend([self.hex_radius, self.hex_radius, 0, 0])
 
         # Generating circle points with rotation
         for i in range(step):
-            x = cos(istep * i + rotation) * self.hex_size
-            y = sin(istep * i + rotation) * self.hex_size
-            vertices.append(self.hex_size + x)
-            vertices.append(self.hex_size + y)
+            x = cos(istep * i + rotation) * self.hex_radius
+            y = sin(istep * i + rotation) * self.hex_radius
+            vertices.append(self.hex_radius + x)
+            vertices.append(self.hex_radius + y)
             # Add the x and y coordinates relative to the center point
-            triangleVertices.extend([self.hex_size + x, self.hex_size + y, 0, 0])
+            triangleVertices.extend([self.hex_radius + x, self.hex_radius + y, 0, 0])
         vertices.append(vertices[0])
         vertices.append(vertices[1])
 

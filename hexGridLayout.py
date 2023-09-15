@@ -6,15 +6,16 @@ from arrow import Arrow
 from definition import *
 from hexagon import Hexagon
 
+F_HEX = 0.866025404
 
 class HexGridLayout(FloatLayout):
     def __init__(
-        self, hex_size=100, xRange=1, yRange=1, versus=HexGridType.HORIZONTAL, **kwargs
+        self, hex_radius=100, xRange=1, yRange=1, versus=HexGridType.HORIZONTAL, **kwargs
     ):
         super().__init__(**kwargs)
 
-        self.hex_size = hex_size
-        self.hex_height = self.hex_size * 0.866
+        self.hex_radius = hex_radius
+        self.hex_innerRadius = self.hex_radius * F_HEX
         self.xRange = xRange
         self.yRange = yRange
         self.versus = versus
@@ -52,15 +53,15 @@ class HexGridLayout(FloatLayout):
 
         if self.versus == HexGridType.HORIZONTAL:
             self.size = (
-                self.hex_height * (self.xRange * 2 + 1),
-                self.hex_size * (self.yRange * 1.5)
-                + (self.hex_height - (self.hex_height * 0.866 / 2)),
+                self.hex_innerRadius * (self.xRange * 2 + 1),
+                self.hex_radius * (self.yRange * 1.5)
+                + (self.hex_innerRadius - (self.hex_innerRadius * F_HEX / 2)),
             )
         else:
             self.size = (
-                self.hex_size * self.xRange
-                + self.hex_size * 0.866 * (self.xRange / 2 + self.xRange % 2),
-                self.hex_size * 0.866 * 2 * self.yRange + self.hex_size * 0.866 / 2,
+                self.hex_radius * self.xRange
+                + self.hex_radius * F_HEX * (self.xRange / 2 + self.xRange % 2),
+                self.hex_radius * F_HEX * 2 * self.yRange + self.hex_radius * F_HEX / 2,
             )
 
         self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
@@ -90,7 +91,7 @@ class HexGridLayout(FloatLayout):
                 hex_id = f"hex_{x}_{self.yRange - y -1}"
                 hex_attrs = hex_data.get(hex_id, {})
                 hexagon = Hexagon(
-                    self.hex_size,
+                    self.hex_radius,
                     bg_r,
                     bg_g,
                     bg_b,
@@ -109,24 +110,25 @@ class HexGridLayout(FloatLayout):
                     color=hex_attrs.get("color", None),
                     walkable=eval(hex_attrs.get("walkable", "True")),
                     showLabel=eval(hex_attrs.get("label", "True")),
+                    fogOfWar=eval(hex_attrs.get("fogOfWar" , "True"))
                 )
                 if self.versus == HexGridType.HORIZONTAL:
                     hexagon.pos = (
-                        x * (self.hex_height * 2)
-                        + ((y + 1) % 2 * self.hex_height)
+                        x * (self.hex_innerRadius * 2)
+                        + ((y + 1) % 2 * self.hex_innerRadius)
                         + center_x
                         - self.width / 2
-                        - (self.hex_size - self.hex_height),
-                        (y * self.hex_size * 1.5) + center_y - self.height / 2,
+                        - (self.hex_radius - self.hex_innerRadius),
+                        (y * self.hex_radius * 1.5) + center_y - self.height / 2,
                     )
                 else:
                     hexagon.pos = (
-                        x * (self.hex_size * 1.5) + center_x - self.width / 2,
-                        y * (self.hex_height * 2)
-                        + ((x + 1) % 2 * self.hex_height)
+                        x * (self.hex_radius * 1.5) + center_x - self.width / 2,
+                        y * (self.hex_innerRadius * 2)
+                        + ((x + 1) % 2 * self.hex_innerRadius)
                         + center_y
                         - self.height / 2
-                        - (self.hex_size - self.hex_height),
+                        - (self.hex_radius - self.hex_innerRadius),
                     )
                 new_id = f"hex_{x}_{self.yRange - y -1}"
                 self.ids[new_id] = hexagon
