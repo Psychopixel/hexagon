@@ -14,10 +14,10 @@ from kivy.app import App
 
 class HexApp(App):
     def build(self):
-        self.hex_size = 75
+        self.hex_size = 100
         self.hex_height = self.hex_size * 0.866
-        self.xRange = 25
-        self.yRange = 17
+        self.xRange = 20
+        self.yRange = 10
 
         Window.maximize()
         self.container = RelativeLayout()
@@ -27,7 +27,7 @@ class HexApp(App):
             hex_size=self.hex_size,
             xRange=self.xRange,
             yRange=self.yRange,
-            versus=HexGridType.HORIZONTAL,
+            versus=HexGridType.VERTICAL,
         )
 
         self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}

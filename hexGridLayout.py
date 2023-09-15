@@ -101,6 +101,7 @@ class HexGridLayout(FloatLayout):
                     terrain=hex_attrs.get("terrain", ""),
                     color=hex_attrs.get("color", None),
                     content=hex_attrs.get("content", ""),
+                    showLabel=eval(hex_attrs.get("label", "True"))
                 )
                 if self.versus == HexGridType.HORIZONTAL:
                     hexagon.pos = (

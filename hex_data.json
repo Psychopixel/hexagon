@@ -1,4 +1,6 @@
 {
-    "hex_0_0": {"terrain": "grass", "color": [15, 107, 3, 1], "content": ""},
-    "hex_0_1": {"terrain": "water", "color": [0, 0, 1, 1], "content": ""}
+    "hex_0_0": {"terrain": "Mountain.png", "color": [15, 107, 3, 1], "content": "", "label": "False"},
+    "hex_9_0": {"terrain": "Grassland.png", "color": [15, 107, 3, 1], "content": "", "label": "False"},
+    "hex_0_1": {"terrain": "Ocean.png", "color": [0, 0, 1, 1], "content": "", "label": "False"},
+    "hex_0_9": {"terrain": "Ocean.png", "color": [0, 0, 1, 1], "content": "", "label": "False"}
 }
