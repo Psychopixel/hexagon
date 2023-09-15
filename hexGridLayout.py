@@ -67,32 +67,39 @@ class HexGridLayout(FloatLayout):
 
         self.arrow = Arrow(self.versus)
 
-    def load_hex_data(self, filename="hex_data.json"):
+    def load_map_data(self, filename="map_data.json"):
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
             return data
         except Exception as e:
-            print(f"Error loading hex data: {e}")
+            print(f"Error loading map data: {e}")
             return {}
 
     def create_hex(self, center_x, center_y, hex_data, *args):
-        hex_data = self.load_hex_data()
+        hex_data = self.load_map_data()
+        hex_attrs = hex_data.get("default_hex", {})
+        if hex_attrs:
+            bg_r, bg_g, bg_b, bg_a = hex_attrs.get("background_color", [0, 0, 125, 1])
+            stroke_r, stroke_g, stroke_b, stroke_a = hex_attrs.get(
+                "stroke_color", [0, 0, 0, 1]
+            )
+            stroke_thickness = hex_attrs.get("stroke_thickness", 2)
         for x in range(self.xRange):
             for y in range(self.yRange):
                 hex_id = f"hex_{x}_{self.yRange - y -1}"
                 hex_attrs = hex_data.get(hex_id, {})
                 hexagon = Hexagon(
                     self.hex_size,
-                    0,
-                    0,
-                    125,
-                    1,
-                    0,
-                    0,
-                    1,
-                    1,
-                    2,
+                    bg_r,
+                    bg_g,
+                    bg_b,
+                    bg_a,
+                    stroke_r,
+                    stroke_g,
+                    stroke_b,
+                    stroke_a,
+                    stroke_thickness,
                     x,
                     y,
                     self.xRange,
@@ -101,7 +108,7 @@ class HexGridLayout(FloatLayout):
                     terrain=hex_attrs.get("terrain", ""),
                     color=hex_attrs.get("color", None),
                     content=hex_attrs.get("content", ""),
-                    showLabel=eval(hex_attrs.get("label", "True"))
+                    showLabel=eval(hex_attrs.get("label", "True")),
                 )
                 if self.versus == HexGridType.HORIZONTAL:
                     hexagon.pos = (

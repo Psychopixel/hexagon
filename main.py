@@ -1,3 +1,5 @@
+import json
+
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
@@ -14,10 +16,23 @@ from kivy.app import App
 
 class HexApp(App):
     def build(self):
-        self.hex_size = 100
+        map_data = self.load_map_data()
+        map_attrs = map_data.get("map", {})
+        if map_attrs:
+            self.hex_size = map_attrs.get("hex_size", 75)
+            self.xRange = map_attrs.get("xRange", 10)
+            self.yRange = map_attrs.get("yRange", 10)
+            orientation = map_attrs.get("orientation", "VERTICAL")
+            if orientation == "VERTICAL":
+                self.versus = HexGridType.VERTICAL
+            else:
+                self.versus = HexGridType.HORIZONTAL
+        else:
+            self.hex_size = 100
+            self.xRange = 20
+            self.yRange = 10
+
         self.hex_height = self.hex_size * 0.866
-        self.xRange = 20
-        self.yRange = 10
 
         Window.maximize()
         self.container = RelativeLayout()
@@ -27,12 +42,21 @@ class HexApp(App):
             hex_size=self.hex_size,
             xRange=self.xRange,
             yRange=self.yRange,
-            versus=HexGridType.VERTICAL,
+            versus=self.versus,
         )
 
         self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
         self.container.add_widget(self.grid)
         return self.container
+
+    def load_map_data(self, filename="map_data.json"):
+        try:
+            with open(filename, "r") as file:
+                data = json.load(file)
+            return data
+        except Exception as e:
+            print(f"Error loading map data: {e}")
+            return {}
 
     def hexClicked_handler(self, instance):
         move = self.grid.calculateMove(instance)
