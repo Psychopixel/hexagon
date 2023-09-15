@@ -1,8 +1,9 @@
 {
-    "map": {"orientation": "HORIZONTAL", "hex_size": 100, "xRange": 10, "yRange": 10},
+    "_comment": "orientation could be VERTICAL or HORIZONTAL",
+    "map": {"orientation": "VERTICAL", "hex_size": 100, "xRange": 10, "yRange": 10},
     "default_hex": {"background_color": [0, 0, 125, 1], "stroke_color": [1, 0, 0, 1], "stroke_thickness": 1},
-    "hex_0_0": {"terrain": "Mountain.png", "color": [15, 107, 3, 1], "content": "", "label": "False"},
-    "hex_9_0": {"terrain": "Grassland.png", "color": [15, 107, 3, 1], "content": "", "label": "False"},
-    "hex_0_1": {"terrain": "Ocean.png", "color": [0, 0, 1, 1], "content": "", "label": "False"},
-    "hex_0_9": {"terrain": "Ocean.png", "color": [0, 0, 1, 1], "content": "", "label": "False"}
+    "hex_0_0": {"terrain": "Mountain.png", "color": [15, 107, 3, 1], "walkable": "False", "label": "False"},
+    "hex_9_0": {"terrain": "Grassland.png", "color": [15, 107, 3, 1], "walkable": "True", "label": "False"},
+    "hex_0_1": {"terrain": "Ocean.png", "color": [0, 0, 1, 1], "walkable": "False", "label": "False"},
+    "hex_0_9": {"terrain": "Ocean.png", "color": [0, 0, 1, 1], "walkable": "False", "label": "False"}
 }

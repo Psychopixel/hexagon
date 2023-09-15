@@ -8,6 +8,7 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from definition import *
 from hexGridLayout import HexGridLayout
+from hexagon import Hexagon
 
 Config.set("graphics", "fullscreen", "auto")
 
@@ -58,15 +59,17 @@ class HexApp(App):
             print(f"Error loading map data: {e}")
             return {}
 
-    def hexClicked_handler(self, instance):
+    def hexClicked_handler(self, instance:Hexagon):
         move = self.grid.calculateMove(instance)
+        if not instance.walkable and (move == "move" or move == "move_back"):
+            return
         if move == None:
             return
         else:
             self.perform_action(move, instance)
 
     def perform_action(self, action, instance):
-        if action == "move":
+        if action == "move" or action == "move_back":
             self.grid.moveArrow(instance.name)
         elif action.startswith("rotate_"):
             self.grid.rotateArrow(int(action.split("_")[-1]))

@@ -30,7 +30,7 @@ class Hexagon(RelativeLayout):
         versus,
         terrain=None,
         color=None,
-        content=None,
+        walkable=True,
         showLabel=True,
         **kwargs,
     ):
@@ -54,7 +54,7 @@ class Hexagon(RelativeLayout):
 
         self.terrain = terrain
         self.hex_color = color if color else (bg_r, bg_g, bg_b, bg_a)
-        self.content = content
+        self.walkable = walkable
         self.texture = None
         if self.terrain:
             # Load the image into a texture
@@ -214,10 +214,10 @@ class Hexagon(RelativeLayout):
         return {
             "terrain": self.terrain,
             "color": self.hex_color,
-            "content": self.content,
+            "walkable": self.walkable,
         }
 
-    def set_attributes(self, terrain=None, color=None, content=None):
+    def set_attributes(self, terrain=None, color=None, walkable=None):
         # Modify the attributes of the hexagon.
         if terrain:
             self.terrain = terrain
@@ -225,5 +225,5 @@ class Hexagon(RelativeLayout):
             self.hex_color = color
             self.r, self.g, self.b, self.a = color  # Update the hexagon's display color
             self.redraw()  # Redraw the hexagon with the new color
-        if content:
-            self.content = content
+        if walkable:
+            self.walkable = walkable

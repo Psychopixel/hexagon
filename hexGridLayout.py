@@ -107,7 +107,7 @@ class HexGridLayout(FloatLayout):
                     self.versus,
                     terrain=hex_attrs.get("terrain", ""),
                     color=hex_attrs.get("color", None),
-                    content=hex_attrs.get("content", ""),
+                    walkable=eval(hex_attrs.get("walkable", "True")),
                     showLabel=eval(hex_attrs.get("label", "True")),
                 )
                 if self.versus == HexGridType.HORIZONTAL:
@@ -206,17 +206,17 @@ class HexGridLayout(FloatLayout):
 
     def getPossibleHex(self, contiguos, direction):
         if direction == 0:
-            clickable = [contiguos[5], contiguos[0], contiguos[1]]
+            clickable = [contiguos[5], contiguos[0], contiguos[1], contiguos[3]]
         elif direction == 1:
-            clickable = [contiguos[0], contiguos[1], contiguos[2]]
+            clickable = [contiguos[0], contiguos[1], contiguos[2], contiguos[4]]
         elif direction == 2:
-            clickable = [contiguos[1], contiguos[2], contiguos[3]]
+            clickable = [contiguos[1], contiguos[2], contiguos[3], contiguos[5]]
         elif direction == 3:
-            clickable = [contiguos[2], contiguos[3], contiguos[4]]
+            clickable = [contiguos[2], contiguos[3], contiguos[4], contiguos[0]]
         elif direction == 4:
-            clickable = [contiguos[3], contiguos[4], contiguos[5]]
+            clickable = [contiguos[3], contiguos[4], contiguos[5], contiguos[1]]
         else:
-            clickable = [contiguos[4], contiguos[5], contiguos[0]]
+            clickable = [contiguos[4], contiguos[5], contiguos[0], contiguos[2]]
         return clickable
 
     def getMove(self, possibleHex, hexClicked, arrow_x, arrow_y, direction):
@@ -231,11 +231,13 @@ class HexGridLayout(FloatLayout):
                     return f"rotate_{newDirection}"
                 elif cnt == 1:
                     return "move"
-                else:
+                elif cnt == 2:
                     newDirection = direction + 1
                     if newDirection > 5:
                         newDirection = 0
                     return f"rotate_{newDirection}"
+                else:
+                    return "move_back"
             cnt += 1
         return None
 
