@@ -6,7 +6,7 @@ from arrow import Arrow
 from definition import *
 from hexagon import Hexagon
 
-F_HEX = 0.866025404
+
 
 class HexGridLayout(FloatLayout):
     def __init__(
@@ -19,34 +19,6 @@ class HexGridLayout(FloatLayout):
         self.xRange = xRange
         self.yRange = yRange
         self.versus = versus
-
-        self.horizontalGridOddRowRange = [
-            # even rows
-            [[+1, 0], [+1, +1], [0, +1], [-1, 0], [0, -1], [+1, -1]],
-            # odd rows
-            [[+1, 0], [0, +1], [-1, +1], [-1, 0], [-1, -1], [0, -1]],
-        ]
-
-        self.horizontalGridEvenRowRange = [
-            # even rows
-            [[+1, 0], [0, +1], [-1, +1], [-1, 0], [-1, -1], [0, -1]],
-            # odd rows
-            [[+1, 0], [+1, +1], [0, +1], [-1, 0], [0, -1], [+1, -1]],
-        ]
-
-        self.verticalGridOddColRange = [
-            # even cols
-            [[+1, 0], [0, +1], [-1, 0], [-1, -1], [0, -1], [+1, -1]],
-            # odd cols
-            [[+1, +1], [0, +1], [-1, +1], [-1, 0], [0, -1], [+1, 0]],
-        ]
-
-        self.verticalGridEvenColRange = [
-            # even cols
-            [[+1, 0], [0, +1], [-1, 0], [-1, -1], [0, -1], [+1, -1]],
-            # odd cols
-            [[+1, +1], [0, +1], [-1, +1], [-1, 0], [0, -1], [+1, 0]],
-        ]
 
         # Set size and position hints
         self.size_hint = (None, None)
@@ -67,6 +39,17 @@ class HexGridLayout(FloatLayout):
         self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
 
         self.arrow = Arrow(self.versus)
+        mapData = self.load_map_data()
+        self.default_hex = mapData.get("default_hex")
+        self.hex_type = mapData.get("type")
+        self.grid = mapData.get("grid")
+
+    def getType(self, id):
+        for hexType in self.hex_type:
+            if hexType["id"] == id:
+                return hexType
+        print(f"Errore, id {id} non trovato!")
+        return None
 
     def load_map_data(self, filename="map_data.json"):
         try:
@@ -78,18 +61,14 @@ class HexGridLayout(FloatLayout):
             return {}
 
     def create_hex(self, center_x, center_y, hex_data, *args):
-        hex_data = self.load_map_data()
-        hex_attrs = hex_data.get("default_hex", {})
-        if hex_attrs:
-            bg_r, bg_g, bg_b, bg_a = hex_attrs.get("background_color", [0, 0, 125, 1])
-            stroke_r, stroke_g, stroke_b, stroke_a = hex_attrs.get(
-                "stroke_color", [0, 0, 0, 1]
-            )
-            stroke_thickness = hex_attrs.get("stroke_thickness", 2)
+        bg_r, bg_g, bg_b, bg_a = self.default_hex.get("background_color", [0, 0, 125, 1])
+        stroke_r, stroke_g, stroke_b, stroke_a = self.default_hex.get("stroke_color", [0, 0, 0, 1])
+        stroke_thickness = self.default_hex.get("stroke_thickness", 2)
         for x in range(self.xRange):
-            for y in range(self.yRange):
+            for y in range(self.yRange-1, 0):
+                yy = self.yRange - y -1
                 hex_id = f"hex_{x}_{self.yRange - y -1}"
-                hex_attrs = hex_data.get(hex_id, {})
+                hex_attrs = self.getType(self.grid[yy][x])
                 hexagon = Hexagon(
                     self.hex_radius,
                     bg_r,
@@ -106,11 +85,11 @@ class HexGridLayout(FloatLayout):
                     self.xRange,
                     self.yRange,
                     self.versus,
-                    terrain=hex_attrs.get("terrain", ""),
-                    color=hex_attrs.get("color", None),
-                    walkable=eval(hex_attrs.get("walkable", "True")),
-                    showLabel=eval(hex_attrs.get("label", "True")),
-                    fogOfWar=eval(hex_attrs.get("fogOfWar" , "True"))
+                    terrain = hex_attrs["terrain"],
+                    color = hex_attrs["color"],
+                    walkable=eval(hex_attrs["walkable"]),
+                    showLabel=eval(hex_attrs["label"]),
+                    fogOfWar=eval(hex_attrs["fogOfWar"])
                 )
                 if self.versus == HexGridType.HORIZONTAL:
                     hexagon.pos = (
@@ -175,36 +154,36 @@ class HexGridLayout(FloatLayout):
                 # even_r
                 if parity_row == 0:
                     # even row
-                    neibourghs = self.horizontalGridEvenRowRange[even].copy()
+                    neibourghs = Contiguos.HORIZONTAL_GRID_EVEN_ROW_RANGE[even].copy()
                 else:
                     # odd row
-                    neibourghs = self.horizontalGridEvenRowRange[odd].copy()
+                    neibourghs = Contiguos.HORIZONTAL_GRID_EVEN_ROW_RANGE[odd].copy()
             else:
                 # odd_r
                 if parity_row == 0:
                     # even row
-                    neibourghs = self.horizontalGridOddRowRange[even].copy()
+                    neibourghs = Contiguos.HORIZONTAL_GRID_ODD_ROW_RANGE[even].copy()
                 else:
                     # odd row
-                    neibourghs = self.horizontalGridOddRowRange[odd].copy()
+                    neibourghs = Contiguos.HORIZONTAL_GRID_ODD_ROW_RANGE[odd].copy()
         else:
             # odd_q or even_q
             if xRange % 2 == 0:
                 # even_q
                 if parity_col == 0:
                     # even col
-                    neibourghs = self.verticalGridEvenColRange[even].copy()
+                    neibourghs = Contiguos.VERTICAL_GRID_EVEN_COL_RANGE[even].copy()
                 else:
                     # odd col
-                    neibourghs = self.verticalGridEvenColRange[odd].copy()
+                    neibourghs = Contiguos.VERTICAL_GRID_EVEN_COL_RANGE[odd].copy()
             else:
                 # odd_q
                 if parity_col == 0:
                     # even col
-                    neibourghs = self.verticalGridOddColRange[even].copy()
+                    neibourghs = Contiguos.VERTICAL_GRID_ODD_COL_RANGE[even].copy()
                 else:
                     # odd col
-                    neibourghs = self.verticalGridOddColRange[odd].copy()
+                    neibourghs = Contiguos.VERTICAL_GRID_ODD_COL_RANGE[odd].copy()
         return neibourghs
 
     def getPossibleHex(self, contiguos, direction):

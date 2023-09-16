@@ -14,8 +14,6 @@ Config.set("graphics", "fullscreen", "auto")
 
 from kivy.app import App
 
-F_HEX = 0.866025404
-
 class HexApp(App):
     def build(self):
         map_data = self.load_map_data()

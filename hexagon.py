@@ -7,9 +7,6 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from definition import *
 
-F_HEX = 0.866025404
-
-
 class Hexagon(RelativeLayout):
     def __init__(
         self,
