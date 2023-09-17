@@ -35,9 +35,10 @@ class Arrow(RelativeLayout):
 
     def moveArrow(self, center, xCoord, yCoord):
         self.center = center
-        # this a correction to be eliminated
-        self.x -= 10
-        self.y -= 5
+        # XXXXXXXXXXXXXXXXXX
+        # this is a correction to be eliminated
+        self.x -= 12.5
+        self.y -= 7.5
         # ------------------------------
         self.xCoord = xCoord
         self.yCoord = yCoord

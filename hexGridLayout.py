@@ -108,23 +108,17 @@ class HexGridLayout(FloatLayout):
                 yMargin = (sizeTot[1] - gridSize[1]) / 2
                 if self.versus == HexGridType.HORIZONTAL:
                     hexagon.pos = (
-                        x * (self.hex_innerRadius * 2)
+                        x * (self.hex_innerRadius * 2.0)
                         + ((y + 1) % 2 * self.hex_innerRadius)
-                        + center_x
-                        - self.width / 2
                         - (self.hex_radius - self.hex_innerRadius),
-                        (y * self.hex_radius * 1.5) + center_y - self.height / 2,
+                        (y * self.hex_radius * 1.5),
                     )
                 else:
                     hexagon.pos = (
                         x * (self.hex_radius * 1.5)
-                        + center_x
-                        - self.width / 2
                         + xMargin,
-                        y * (self.hex_innerRadius * 2)
+                        y * (self.hex_innerRadius * 2.0)
                         + ((x + 1) % 2 * self.hex_innerRadius)
-                        + center_y
-                        - self.height / 2
                         - (self.hex_radius - self.hex_innerRadius)
                         + yMargin,
                     )
