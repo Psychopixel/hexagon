@@ -13,18 +13,16 @@ class Arrow(RelativeLayout):
 
         # Construct the path in a cross-platform way
         path = os.path.join(AppPath.resource_path("images"))
-
-
         self.arrow_button = Button(
             background_normal=os.path.join(path, "freccia.png"),
             background_down=os.path.join(path, "freccia.png"),
             size_hint=(None, None),
         )
-
+        self.arrow_button.pos_hint = ({"center_x": 0.5, "center_y": 0.5})
         # Add the button to the Arrow layout
         self.add_widget(self.arrow_button)
         #self.coloraSfondo(self.arrow_button, 1., 0.15, 0.15, 1)
-
+        self.size=self.arrow_button.size
         self.xCoord = -1
         self.yCoord = -1
         self.direction = 0
