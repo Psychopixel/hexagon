@@ -20,7 +20,7 @@ class Arrow(RelativeLayout):
 
         # Add the button to the Arrow layout
         self.add_widget(self.arrow_button)
-        # self.coloraSfondo(self.arrow_button, 1., 0.15, 0.15, 1)
+        #self.coloraSfondo(self.arrow_button, 1., 0.15, 0.15, 1)
 
         self.xCoord = -1
         self.yCoord = -1
@@ -32,6 +32,10 @@ class Arrow(RelativeLayout):
 
     def moveArrow(self, center, xCoord, yCoord):
         self.center = center
+        # this a correction to be eliminated
+        self.x -= 10
+        self.y -= 5
+        # ------------------------------
         self.xCoord = xCoord
         self.yCoord = yCoord
 

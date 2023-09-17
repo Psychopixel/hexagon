@@ -7,6 +7,7 @@ from kivy.uix.relativelayout import RelativeLayout
 
 from definition import *
 
+
 class Hexagon(RelativeLayout):
     def __init__(
         self,
@@ -58,11 +59,11 @@ class Hexagon(RelativeLayout):
         if self.terrain:
             # Load the image into a texture
             fileName = AppPath.resource_path(f".\images")
-            fileName += "\\"+self.terrain
+            fileName += "\\" + self.terrain
             self.imageTexture = Image(fileName).texture
             # Ensure the texture repeats instead of stretching
             self.imageTexture.wrap = "repeat"
-        self.showLabel=showLabel
+        self.showLabel = showLabel
         fileName = AppPath.resource_path(f".\images\FogOfWar.png")
         self.fogOfWarTexture = Image(fileName).texture
         # Ensure the texture repeats instead of stretching
@@ -70,7 +71,7 @@ class Hexagon(RelativeLayout):
 
         self.coords_label = Label()
         self.coords_label.color = (1, 1, 1, 1)
-        
+
         self.size_hint = (None, None)
         self.hex_innerRadius = self.hex_radius * F_HEX
         self.size = (self.hex_radius, self.hex_innerRadius)

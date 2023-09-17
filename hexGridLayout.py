@@ -1,14 +1,20 @@
 import json
 
 from kivy.uix.floatlayout import FloatLayout
-
+from kivy.core.window import Window
 from arrow import Arrow
 from definition import *
 from hexagon import Hexagon
 
+
 class HexGridLayout(FloatLayout):
     def __init__(
-        self, hex_radius=100, xRange=1, yRange=1, versus=HexGridType.HORIZONTAL, **kwargs
+        self,
+        hex_radius=100,
+        xRange=1,
+        yRange=1,
+        versus=HexGridType.HORIZONTAL,
+        **kwargs,
     ):
         super().__init__(**kwargs)
 
@@ -20,21 +26,23 @@ class HexGridLayout(FloatLayout):
 
         # Set size and position hints
         self.size_hint = (None, None)
-
+        self.size = Window.size
         if self.versus == HexGridType.HORIZONTAL:
-            self.size = (
+            self.gridSize = (
                 self.hex_innerRadius * (self.xRange * 2 + 1),
                 self.hex_radius * (self.yRange * 1.5)
                 + (self.hex_innerRadius - (self.hex_innerRadius * F_HEX / 2)),
             )
+            # self.size = self.gridSize
         else:
-            self.size = (
+            self.gridSize = (
                 self.hex_radius * self.xRange
                 + self.hex_radius * F_HEX * (self.xRange / 2 + self.xRange % 2),
                 self.hex_radius * F_HEX * 2 * self.yRange + self.hex_radius * F_HEX / 2,
             )
+            # self.size = self.gridSize
 
-        self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
+        # self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
 
         self.arrow = Arrow(self.versus)
         fileName = AppPath.resource_path("map_data.json")
@@ -60,13 +68,17 @@ class HexGridLayout(FloatLayout):
             return {}
 
     def create_hex(self, center_x, center_y, *args):
-        bg_r, bg_g, bg_b, bg_a = self.default_hex.get("background_color", [0, 0, 125, 1])
-        stroke_r, stroke_g, stroke_b, stroke_a = self.default_hex.get("stroke_color", [0, 0, 0, 1])
+        bg_r, bg_g, bg_b, bg_a = self.default_hex.get(
+            "background_color", [0, 0, 125, 1]
+        )
+        stroke_r, stroke_g, stroke_b, stroke_a = self.default_hex.get(
+            "stroke_color", [0, 0, 0, 1]
+        )
         stroke_thickness = self.default_hex.get("stroke_thickness", 2)
         for x in range(self.xRange):
             for y in range(self.yRange):
-                yy = self.yRange - y -1
-                #hex_id = f"hex_{x}_{self.yRange - y -1}"
+                yy = self.yRange - y - 1
+                # hex_id = f"hex_{x}_{self.yRange - y -1}"
                 hex_attrs = self.getType(self.grid[yy][x])
                 hexagon = Hexagon(
                     self.hex_radius,
@@ -84,12 +96,16 @@ class HexGridLayout(FloatLayout):
                     self.xRange,
                     self.yRange,
                     self.versus,
-                    terrain = hex_attrs["terrain"],
-                    color = hex_attrs["color"],
+                    terrain=hex_attrs["terrain"],
+                    color=hex_attrs["color"],
                     walkable=eval(hex_attrs["walkable"]),
                     showLabel=eval(hex_attrs["label"]),
-                    fogOfWar=eval(hex_attrs["fogOfWar"])
+                    fogOfWar=eval(hex_attrs["fogOfWar"]),
                 )
+                sizeTot = list(self.size)
+                gridSize = list(self.gridSize)
+                xMargin = (sizeTot[0] - gridSize[0]) / 2
+                yMargin = (sizeTot[1] - gridSize[1]) / 2
                 if self.versus == HexGridType.HORIZONTAL:
                     hexagon.pos = (
                         x * (self.hex_innerRadius * 2)
@@ -101,12 +117,16 @@ class HexGridLayout(FloatLayout):
                     )
                 else:
                     hexagon.pos = (
-                        x * (self.hex_radius * 1.5) + center_x - self.width / 2,
+                        x * (self.hex_radius * 1.5)
+                        + center_x
+                        - self.width / 2
+                        + xMargin,
                         y * (self.hex_innerRadius * 2)
                         + ((x + 1) % 2 * self.hex_innerRadius)
                         + center_y
                         - self.height / 2
-                        - (self.hex_radius - self.hex_innerRadius),
+                        - (self.hex_radius - self.hex_innerRadius)
+                        + yMargin,
                     )
                 new_id = f"hex_{x}_{self.yRange - y -1}"
                 self.ids[new_id] = hexagon

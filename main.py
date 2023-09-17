@@ -10,7 +10,6 @@ from kivy.config import Config
 from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
 from kivy.uix.relativelayout import RelativeLayout
-
 from definition import *
 from hexGridLayout import HexGridLayout
 from hexagon import Hexagon
@@ -41,6 +40,7 @@ class HexApp(App):
 
         self.hex_innerRadius = self.hex_radius * F_HEX
 
+        #Window.fullscreen = True
         Window.maximize()
         self.container = RelativeLayout()
 
@@ -52,7 +52,8 @@ class HexApp(App):
             versus=self.versus,
         )
 
-        self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
+        #self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
+        self.grid.pos = (0,0)
         self.container.add_widget(self.grid)
         return self.container
 
