@@ -57,15 +57,19 @@ class Hexagon(RelativeLayout):
         self.fogOfWar = fogOfWar
         self.texture = None
         if self.terrain:
-            # Load the image into a texture
-            fileName = AppPath.resource_path(f".\images")
-            fileName += "\\" + self.terrain
+            # Construct the path in a cross-platform way
+            path = AppPath.resource_path("images")
+            fileName = os.path.join(path, self.terrain)
+            
             self.imageTexture = Image(fileName).texture
             # Ensure the texture repeats instead of stretching
             self.imageTexture.wrap = "repeat"
         self.showLabel = showLabel
-        fileName = AppPath.resource_path(f".\images\FogOfWar.png")
+
+        # Construct the FogOfWar path in a cross-platform way
+        fileName = os.path.join(AppPath.resource_path("images"), "FogOfWar.png")
         self.fogOfWarTexture = Image(fileName).texture
+
         # Ensure the texture repeats instead of stretching
         self.fogOfWarTexture.wrap = "repeat"
 

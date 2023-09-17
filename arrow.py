@@ -1,5 +1,5 @@
 from math import pi
-
+import os
 from kivy.graphics import Color, Rectangle, Rotate
 from kivy.uix.button import Button
 from kivy.uix.relativelayout import RelativeLayout
@@ -10,11 +10,14 @@ class Arrow(RelativeLayout):
     def __init__(self, versus, **kwargs):
         super().__init__(**kwargs)
         self.versus = versus
-        # Create a button with the image texture
-        path = AppPath.resource_path(".\images\\")
+
+        # Construct the path in a cross-platform way
+        path = os.path.join(AppPath.resource_path("images"))
+
+
         self.arrow_button = Button(
-            background_normal=f"{path}freccia.png",
-            background_down=f"{path}freccia.png",
+            background_normal=os.path.join(path, "freccia.png"),
+            background_down=os.path.join(path, "freccia.png"),
             size_hint=(None, None),
         )
 
