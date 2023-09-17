@@ -7,3 +7,6 @@ appoggio/
 __pycache__/
 .venv/
 exe/
+autoExe.json
+*.spec
+requirements.txt

@@ -6,8 +6,6 @@ from arrow import Arrow
 from definition import *
 from hexagon import Hexagon
 
-
-
 class HexGridLayout(FloatLayout):
     def __init__(
         self, hex_radius=100, xRange=1, yRange=1, versus=HexGridType.HORIZONTAL, **kwargs
@@ -39,7 +37,8 @@ class HexGridLayout(FloatLayout):
         self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
 
         self.arrow = Arrow(self.versus)
-        mapData = self.load_map_data()
+        fileName = AppPath.resource_path("map_data.json")
+        mapData = self.load_map_data(fileName)
         self.default_hex = mapData.get("default_hex")
         self.hex_type = mapData.get("type")
         self.grid = mapData.get("grid")
@@ -51,7 +50,7 @@ class HexGridLayout(FloatLayout):
         print(f"Errore, id {id} non trovato!")
         return None
 
-    def load_map_data(self, filename="map_data.json"):
+    def load_map_data(self, filename):
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
@@ -60,14 +59,14 @@ class HexGridLayout(FloatLayout):
             print(f"Error loading map data: {e}")
             return {}
 
-    def create_hex(self, center_x, center_y, hex_data, *args):
+    def create_hex(self, center_x, center_y, *args):
         bg_r, bg_g, bg_b, bg_a = self.default_hex.get("background_color", [0, 0, 125, 1])
         stroke_r, stroke_g, stroke_b, stroke_a = self.default_hex.get("stroke_color", [0, 0, 0, 1])
         stroke_thickness = self.default_hex.get("stroke_thickness", 2)
         for x in range(self.xRange):
-            for y in range(self.yRange-1, 0):
+            for y in range(self.yRange):
                 yy = self.yRange - y -1
-                hex_id = f"hex_{x}_{self.yRange - y -1}"
+                #hex_id = f"hex_{x}_{self.yRange - y -1}"
                 hex_attrs = self.getType(self.grid[yy][x])
                 hexagon = Hexagon(
                     self.hex_radius,

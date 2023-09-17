@@ -4,16 +4,14 @@ from kivy.graphics import Color, Rectangle, Rotate
 from kivy.uix.button import Button
 from kivy.uix.relativelayout import RelativeLayout
 
-from definition import HexGridType
-from hexagon import Hexagon
-
+from definition import HexGridType, AppPath
 
 class Arrow(RelativeLayout):
     def __init__(self, versus, **kwargs):
         super().__init__(**kwargs)
         self.versus = versus
         # Create a button with the image texture
-        path = f".\images\\"
+        path = AppPath.resource_path(".\images\\")
         self.arrow_button = Button(
             background_normal=f"{path}freccia.png",
             background_down=f"{path}freccia.png",

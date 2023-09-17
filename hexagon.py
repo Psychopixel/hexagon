@@ -57,11 +57,14 @@ class Hexagon(RelativeLayout):
         self.texture = None
         if self.terrain:
             # Load the image into a texture
-            self.imageTexture = Image(f".\images\{self.terrain}").texture
+            fileName = AppPath.resource_path(f".\images")
+            fileName += "\\"+self.terrain
+            self.imageTexture = Image(fileName).texture
             # Ensure the texture repeats instead of stretching
             self.imageTexture.wrap = "repeat"
         self.showLabel=showLabel
-        self.fogOfWarTexture = Image(f".\images\FogOfWar.png").texture
+        fileName = AppPath.resource_path(f".\images\FogOfWar.png")
+        self.fogOfWarTexture = Image(fileName).texture
         # Ensure the texture repeats instead of stretching
         self.fogOfWarTexture.wrap = "repeat"
 

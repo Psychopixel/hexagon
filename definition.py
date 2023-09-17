@@ -1,7 +1,14 @@
 from enum import Enum
 from math import pi
-
+import os, sys
 F_HEX = 0.866025404
+
+class AppPath:
+    @staticmethod
+    def resource_path(relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_path, relative_path)
 
 # Define an Enum for directions
 class Direction(Enum):

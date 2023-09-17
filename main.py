@@ -1,5 +1,10 @@
 import json
-
+# to create the executable  
+from kivy.resources import resource_add_path
+import os, sys
+if sys.__stdout__ is None or sys.__stderr__ is None:
+     os.environ['KIVY_NO_CONSOLELOG'] = '1'
+     
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
@@ -15,8 +20,9 @@ Config.set("graphics", "fullscreen", "auto")
 from kivy.app import App
 
 class HexApp(App):
+
     def build(self):
-        map_data = self.load_map_data()
+        map_data = self.load_map_data(AppPath.resource_path("map_data.json"))
         self.map_attrs = map_data.get("map", {})
         if self.map_attrs:
             self.hex_radius = self.map_attrs.get("hex_radius", 75)
@@ -50,7 +56,7 @@ class HexApp(App):
         self.container.add_widget(self.grid)
         return self.container
 
-    def load_map_data(self, filename="map_data.json"):
+    def load_map_data(self, filename):
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
@@ -77,9 +83,7 @@ class HexApp(App):
 
     def on_start(self):
         self.container.center = Window.center
-        self.grid.create_hex(
-            self.container.center_x, self.container.center_y, hex_data={}
-        )
+        self.grid.create_hex(self.container.center_x, self.container.center_y)
         for hex in self.grid.children:
             hex.bind(on_hex_clicked_event=self.hexClicked_handler)
         self.grid.create_arrow()
@@ -108,4 +112,8 @@ class HexApp(App):
 
 
 if __name__ == "__main__":
+    # added to create executable with pyinstaller
+    if hasattr(sys, '_MEIPASS'):
+        resource_add_path((os.path.join(sys._MEIPASS)))
+    #----------------------
     HexApp().run()
