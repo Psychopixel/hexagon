@@ -1,13 +1,15 @@
-from math import pi
 import os
+from math import pi
+
 from kivy.graphics import Color, Rectangle, Rotate
 from kivy.uix.button import Button
 from kivy.uix.relativelayout import RelativeLayout
 
-from definition import HexGridType, AppPath
+from definition import AppPath, HexGridType
+
 
 class Arrow(RelativeLayout):
-    def __init__(self, versus, **kwargs):
+    def __init__(self, versus, arrow_size, **kwargs):
         super().__init__(**kwargs)
         self.versus = versus
 
@@ -17,12 +19,13 @@ class Arrow(RelativeLayout):
             background_normal=os.path.join(path, "freccia.png"),
             background_down=os.path.join(path, "freccia.png"),
             size_hint=(None, None),
+            size=(arrow_size, arrow_size),
         )
-        self.arrow_button.pos_hint = ({"center_x": 0.5, "center_y": 0.5})
+        self.arrow_button.pos_hint = {"center_x": 0.5, "center_y": 0.5}
         # Add the button to the Arrow layout
         self.add_widget(self.arrow_button)
-        #self.coloraSfondo(self.arrow_button, 1., 0.15, 0.15, 1)
-        self.size=self.arrow_button.size
+        # self.coloraSfondo(self.arrow_button, 1., 0.15, 0.15, 1)
+        self.size = self.arrow_button.size
         self.xCoord = -1
         self.yCoord = -1
         self.direction = 0
@@ -33,11 +36,6 @@ class Arrow(RelativeLayout):
 
     def moveArrow(self, center, xCoord, yCoord):
         self.center = center
-        # XXXXXXXXXXXXXXXXXX
-        # this is a correction to be eliminated
-        self.x -= 12.5
-        self.y -= 7.5
-        # ------------------------------
         self.xCoord = xCoord
         self.yCoord = yCoord
 

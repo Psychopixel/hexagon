@@ -1,7 +1,8 @@
 import json
 
-from kivy.uix.floatlayout import FloatLayout
 from kivy.core.window import Window
+from kivy.uix.floatlayout import FloatLayout
+
 from arrow import Arrow
 from definition import *
 from hexagon import Hexagon
@@ -44,7 +45,7 @@ class HexGridLayout(FloatLayout):
 
         # self.pos_hint = {"center_x": 0.5, "center_y": 0.5}
 
-        self.arrow = Arrow(self.versus)
+        self.arrow = Arrow(self.versus, self.hex_radius / F_HEX)
         fileName = AppPath.resource_path("map_data.json")
         mapData = self.load_map_data(fileName)
         self.default_hex = mapData.get("default_hex")
@@ -115,8 +116,7 @@ class HexGridLayout(FloatLayout):
                     )
                 else:
                     hexagon.pos = (
-                        x * (self.hex_radius * 1.5)
-                        + xMargin,
+                        x * (self.hex_radius * 1.5) + xMargin,
                         y * (self.hex_innerRadius * 2.0)
                         + ((x + 1) % 2 * self.hex_innerRadius)
                         - (self.hex_radius - self.hex_innerRadius)

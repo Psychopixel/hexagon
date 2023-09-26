@@ -60,7 +60,7 @@ class Hexagon(RelativeLayout):
             # Construct the path in a cross-platform way
             path = AppPath.resource_path("images")
             fileName = os.path.join(path, self.terrain)
-            
+
             self.imageTexture = Image(fileName).texture
             # Ensure the texture repeats instead of stretching
             self.imageTexture.wrap = "repeat"

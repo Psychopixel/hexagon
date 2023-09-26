@@ -1,25 +1,33 @@
 import json
-# to create the executable  
+import os
+import sys
+from math import sqrt
+
+# to create the executable
 from kivy.resources import resource_add_path
-import os, sys
+
 if sys.__stdout__ is None or sys.__stderr__ is None:
-     os.environ['KIVY_NO_CONSOLELOG'] = '1'
-     
+    os.environ["KIVY_NO_CONSOLELOG"] = "1"
+
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
+from kivy.uix.button import Button
 from kivy.uix.relativelayout import RelativeLayout
+
 from definition import *
-from hexGridLayout import HexGridLayout
 from hexagon import Hexagon
+from hexGridLayout import HexGridLayout
 
 Config.set("graphics", "fullscreen", "auto")
+# Remove the border and title bar
+Config.set("graphics", "borderless", 1)
 
 from kivy.app import App
 
-class HexApp(App):
 
+class HexApp(App):
     def build(self):
         map_data = self.load_map_data(AppPath.resource_path("map_data.json"))
         self.map_attrs = map_data.get("map", {})
@@ -40,9 +48,15 @@ class HexApp(App):
 
         self.hex_innerRadius = self.hex_radius * F_HEX
 
-        #Window.fullscreen = True
+        Window.fullscreen = True
         Window.maximize()
         self.container = RelativeLayout()
+
+        self.window_width = Window.size[0]
+        self.window_height = Window.size[1]
+        self.hex_radius, self.hex_width, self.hex_height = self.calculateHexSize(
+            self.xRange, self.yRange, self.window_width, self.window_height
+        )
 
         # Create an instance of HexGridLayout with appropriate parameters
         self.grid = HexGridLayout(
@@ -52,10 +66,34 @@ class HexApp(App):
             versus=self.versus,
         )
 
-        #self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
-        self.grid.pos = (0,0)
+        # self.grid.pos_hint = {"center_x": 0.5, "center_y": 0.5}
+        self.grid.pos = (0, 0)
+        self.exit = Button(text="Exit")
+        self.exit.size_hint = (None, None)
+        self.exit.size = (100, 50)
+        self.exit.background_color = (1, 0, 0, 1)
+        self.exit.pos_hint = {"center_x": 0.5, "top": 0.05}
+        self.exit.bind(on_release=self.exit_handlers)
         self.container.add_widget(self.grid)
+        self.container.add_widget(self.exit)
+
         return self.container
+
+    def exit_handlers(self, instance):
+        sys.exit()
+
+    def calculateHexSize(self, num_col, num_row, win_width, win_height):
+        space = float(min(win_width, win_height))
+        num = max(num_col, num_row)
+        hex_size = space / (num * 2.0)
+        if self.versus == HexGridType.HORIZONTAL:
+            hex_width = sqrt(3.0) * hex_size
+            hex_height = 2.0 * hex_size
+        else:
+            hex_width = 2.0 * hex_size
+            hex_height = sqrt(3.0) * hex_size
+
+        return hex_size, hex_width, hex_height
 
     def load_map_data(self, filename):
         try:
@@ -66,7 +104,7 @@ class HexApp(App):
             print(f"Error loading map data: {e}")
             return {}
 
-    def hexClicked_handler(self, instance:Hexagon):
+    def hexClicked_handler(self, instance: Hexagon):
         move = self.grid.calculateMove(instance)
         if move == None:
             return
@@ -114,7 +152,7 @@ class HexApp(App):
 
 if __name__ == "__main__":
     # added to create executable with pyinstaller
-    if hasattr(sys, '_MEIPASS'):
+    if hasattr(sys, "_MEIPASS"):
         resource_add_path((os.path.join(sys._MEIPASS)))
-    #----------------------
+    # ----------------------
     HexApp().run()
